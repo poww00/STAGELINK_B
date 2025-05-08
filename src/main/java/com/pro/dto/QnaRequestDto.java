@@ -1,12 +1,11 @@
 package com.pro.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class QnaRequestDto {
-    private String title;
-    private String content;
-    private Long member;
+    private Long memberNo;
+    private String questionContents;
 }

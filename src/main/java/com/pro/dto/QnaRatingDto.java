@@ -1,10 +1,11 @@
 package com.pro.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class QnaRatingDto {
     private Integer rating;
 }
