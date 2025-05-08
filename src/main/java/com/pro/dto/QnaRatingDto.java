@@ -1,4 +1,4 @@
-package com.pro.yeji.qna.dto;
+package com.pro.dto;
 
 import lombok.Getter;
 import lombok.Setter;

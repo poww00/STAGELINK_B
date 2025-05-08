@@ -1,4 +1,4 @@
-package com.pro.yeji.qna.entity;
+package com.pro.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

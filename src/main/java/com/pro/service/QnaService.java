@@ -1,9 +1,9 @@
-package com.pro.yeji.qna.service;
+package com.pro.service;
 
-import com.pro.yeji.qna.dto.QnaRequestDto;
-import com.pro.yeji.qna.dto.QnaResponseDto;
-import com.pro.yeji.qna.entity.Post;
-import com.pro.yeji.qna.repository.PostRepository;
+import com.pro.dto.QnaRequestDto;
+import com.pro.dto.QnaResponseDto;
+import com.pro.entity.Post;
+import com.pro.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

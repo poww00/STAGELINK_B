@@ -1,9 +1,9 @@
-package com.pro.yeji.qna.controller;
+package com.pro.controller;
 
-import com.pro.yeji.qna.dto.QnaRatingDto;
-import com.pro.yeji.qna.dto.QnaRequestDto;
-import com.pro.yeji.qna.dto.QnaResponseDto;
-import com.pro.yeji.qna.service.QnaService;
+import com.pro.dto.QnaRatingDto;
+import com.pro.dto.QnaRequestDto;
+import com.pro.dto.QnaResponseDto;
+import com.pro.service.QnaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

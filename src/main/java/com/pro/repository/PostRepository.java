@@ -1,6 +1,6 @@
-package com.pro.yeji.qna.repository;
+package com.pro.repository;
 
-import com.pro.yeji.qna.entity.Post;
+import com.pro.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
