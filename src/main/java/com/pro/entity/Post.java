@@ -1,8 +1,7 @@
 package com.pro.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -10,21 +9,21 @@ import java.time.LocalDateTime;
 @Table(name = "tbl_post")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postNo;
+    private Long postNo; // 게시글 번호 (PK)
 
-    private int type; // 0: 일반, 1: 공지사항, 2: QnA
+    private Long memberNo; // 작성자 회원 번호
 
-    private String title;
+    private String title; // 게시글 제목
 
-    private String content;
+    @Column(columnDefinition = "TEXT")
+    private String content; // 게시글 내용
 
-    private Long member;
+    private LocalDateTime registerDate = LocalDateTime.now(); // 작성일시
 
-    private LocalDateTime registerDate;
-
-    private Integer rating;
 }
