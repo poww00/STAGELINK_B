@@ -35,4 +35,8 @@ public class Comment {
 
     @Column(name = "comment_report_count")
     private Integer commentReportCount = 0;  // 신고 횟수
+
+    @Column(name = "nickname", length = 20)
+    private String nickname;                // 닉네임
+
 }

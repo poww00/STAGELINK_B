@@ -36,8 +36,11 @@ public class PostService {
         post.setMemberNo(dto.getMemberNo());
         post.setTitle(dto.getTitle());
         post.setContent(dto.getContent());
+        post.setRating(dto.getRating());
+        post.setNickname(dto.getNickname()); // 닉네임 저장
         post = postRepository.save(post);
         return new PostResponseDto(post);
+
     }
 
     // 게시글 삭제

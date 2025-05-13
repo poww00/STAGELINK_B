@@ -29,6 +29,8 @@ public class CommentService {
         comment.setPostNo(dto.getPostNo());         // 댓글이 달린 게시글 번호
         comment.setMemberNo(dto.getMemberNo());     // 댓글 작성자 회원 번호
         comment.setContent(dto.getContent());       // 댓글 내용
+        comment.setNickname(dto.getNickname()); // 닉네임 저장
+
 
         comment = commentRepository.save(comment);  // DB에 저장
 

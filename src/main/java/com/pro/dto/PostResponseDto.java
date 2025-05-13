@@ -15,6 +15,9 @@ public class PostResponseDto {
     private String title;
     private String content;
     private LocalDateTime registerDate;
+    private Integer rating;
+    private String nickname;
+
 
     //  Post 엔티티를 Dto로 변환하는 생성자
     public PostResponseDto(Post post) {
@@ -23,5 +26,7 @@ public class PostResponseDto {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.registerDate = post.getRegisterDate();
+        this.rating = post.getRating();
+        this.nickname = post.getNickname();
     }
 }
