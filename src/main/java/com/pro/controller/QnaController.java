@@ -1,4 +1,4 @@
-package com.pro.controller.qna;
+package com.pro.controller;
 
 import com.pro.dto.QnaRatingDto;
 import com.pro.dto.QnaRequestDto;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/qna")
+@RequestMapping("/api/community/qna")
 @RequiredArgsConstructor
 public class QnaController {
 
