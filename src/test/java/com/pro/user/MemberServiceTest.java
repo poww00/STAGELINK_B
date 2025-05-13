@@ -44,7 +44,8 @@ public class MemberServiceTest {
         //When 회원가입 메서드 실행
         memberService.register(dto);
         //Then 저장된 회원 정보 검증
-        Member saved = memberRepository.findByUserId("test");
+        Member saved = memberRepository.findByUserId("test")
+                .orElseThrow(() -> new IllegalArgumentException("회원 없음"));
         assertEquals("test", saved.getUserId());
         assertTrue(passwordEncoder.matches("abcd1234", saved.getPassword()));
         assertEquals("김가가", saved.getName());
@@ -56,7 +57,7 @@ public class MemberServiceTest {
 
     @DisplayName("중복된 아이디로 회원가입시 예외가 발생")
     @Test
-    public void 중복_아이디_예외() {
+    public void 중복_아이디_예외() throws Exception {
         // Given
         MemberRegisterDto firstDto = MemberRegisterDto.builder()
                 .userId("test")
@@ -88,7 +89,7 @@ public class MemberServiceTest {
 
     @DisplayName("중복된 이메일로 회원가입시 예외가 발생")
     @Test
-    public void 중복_이메일_예외() {
+    public void 중복_이메일_예외() throws Exception {
         // Given
         MemberRegisterDto firstDto = MemberRegisterDto.builder()
                 .userId("test1")
