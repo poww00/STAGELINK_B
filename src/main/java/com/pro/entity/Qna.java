@@ -7,7 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "tbl_qnaswer") // 💡 현재 테이블명이 이거니까 그대로 유지
+@Table(name = "tbl_qnanswer")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,7 +16,7 @@ public class Qna {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "question_no") // 🔥 꼭 필요합니다
+    @Column(name = "question_no")
     private Long questionNo;
 
     @Column(name = "member_no", nullable = false)
