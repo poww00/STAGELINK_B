@@ -11,7 +11,7 @@ public interface ShowInfoService {
     List<ShowInfoDTO> getAllShowInfos();
 
     // 공연 상세 조회
-    ShowInfoDTO getShowInfo(Long id);
+    ShowInfoDTO getShowInfo(Integer id);
 
     // 정렬 + 페이징 조회
     Page<ShowInfoDTO> getSortedShowInfoList(String sortBy, String direction, int page, int size, boolean excludeEnded);

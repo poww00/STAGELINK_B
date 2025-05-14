@@ -31,7 +31,7 @@ public class ShowInfoServiceImpl implements ShowInfoService {
 
     // ID를 통한 공연 기본 정보 상세 조회
     @Override
-    public ShowInfoDTO getShowInfo(Long id) {
+    public ShowInfoDTO getShowInfo(Integer id) {
         ShowInfo showInfo = showInfoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 공연 정보가 존재하지 않습니다."));
         return ShowInfoDTO.fromEntity(showInfo);

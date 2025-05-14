@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
 public class ShowDTO {
 
     // 공연 ID (PK)
-    private Long id;
+    private Integer id;
 
     // 공연의 기본 정보 ID (TBL_SHOWINFO와 연관)
-    private Long showInfoId;
+    private Integer showInfoId;
 
     // 공연 시작 일시 (회차 시작 시간)
     private LocalDateTime startTime;
@@ -37,14 +37,11 @@ public class ShowDTO {
     // 공연 상태 코드 (0: 판매예정, 1: 판매중, 2: 품절, 3: 예약종료, 4: 진행중, 5: 종료)
     private Integer showState;
 
-     //Show 엔티티를 DTO로 변환하는 정적 메서드
-     //@param show Show 엔티티
-     //@return ShowDTO
-
+    // Show 엔티티를 DTO로 변환하는 정적 메서드
     public static ShowDTO fromEntity(Show show) {
         return ShowDTO.builder()
-                .id(show.getShowNo())
-                .showInfoId(show.getShowInfo().getId())
+                .id(show.getShowNo().intValue()) // Long → Integer 변환
+                .showInfoId(show.getShowInfo().getId()) // ShowInfo의 id도 Integer로 바뀐 경우
                 .startTime(show.getShowStartTime())
                 .endTime(show.getShowEndTime())
                 .seatRPrice(show.getSeatRPrice())
@@ -54,5 +51,4 @@ public class ShowDTO {
                 .showState(show.getShowState())
                 .build();
     }
-
 }

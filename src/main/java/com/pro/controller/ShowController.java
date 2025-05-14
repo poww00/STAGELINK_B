@@ -26,7 +26,7 @@ public class ShowController {
 
     // 공연 상세 조회
     @GetMapping("/shows/{id}")
-    public ResponseEntity<ShowDTO> getShow(@PathVariable Long id) {
+    public ResponseEntity<ShowDTO> getShow(@PathVariable Integer id) {
         return ResponseEntity.ok(showService.getShow(id));
     }
 

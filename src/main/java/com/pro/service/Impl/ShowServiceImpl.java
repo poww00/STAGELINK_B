@@ -22,11 +22,12 @@ public class ShowServiceImpl implements ShowService {
 
     // 공연 ID로 공연 상세 정보 조회
     @Override
-    public ShowDTO getShow(Long showNo) {
+    public ShowDTO getShow(Integer showNo) {
         Show show = showRepository.findById(showNo)
                 .orElseThrow(() -> new IllegalArgumentException("해당 공연이 존재하지 않습니다. ID: " + showNo));
         return ShowDTO.fromEntity(show);
     }
+
 
     // 전체 공연 목록 조회
     @Override

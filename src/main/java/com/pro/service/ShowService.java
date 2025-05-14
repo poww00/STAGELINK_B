@@ -10,7 +10,7 @@ public interface ShowService {
     List<ShowDTO> getAllShows();
 
     // 공연 상세 조회
-    ShowDTO getShow(Long showNo);
+    ShowDTO getShow(Integer showNo);
 
     List<ShowDTO> getAvailableShows(); // [추가] 예매 가능한 공연만 조회
 }
