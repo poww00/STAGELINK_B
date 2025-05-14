@@ -54,7 +54,7 @@ public class RankingServiceImpl implements RankingService {
     private List<ShowInfoDTO> mapToDTO(List<Object[]> results) {
         List<ShowInfoDTO> dtoList = new ArrayList<>();
         for (Object[] result : results) {
-            Long showNo = ((Number) result[0]).longValue();
+            Integer showNo = ((Number) result[0]).intValue();
             showInfoRepository.findById(showNo).ifPresent(showInfo ->
                     dtoList.add(ShowInfoDTO.fromEntity(showInfo))
             );

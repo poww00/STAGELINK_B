@@ -21,7 +21,7 @@ public class ShowInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "show_info")
-    private Long id;
+    private Integer id;
 
     // 포스터 이미지 경로
     @Column(name = "show_poster", nullable = false, length = 255)

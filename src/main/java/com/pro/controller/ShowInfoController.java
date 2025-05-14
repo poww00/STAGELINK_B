@@ -24,7 +24,7 @@ public class ShowInfoController {
 
     // 공연 기본 정보 상세 조회
     @GetMapping("/{id}")
-    public ResponseEntity<ShowInfoDTO> getShowInfo(@PathVariable Long id) {
+    public ResponseEntity<ShowInfoDTO> getShowInfo(@PathVariable Integer id) {
         return ResponseEntity.ok(showInfoService.getShowInfo(id));
     }
 

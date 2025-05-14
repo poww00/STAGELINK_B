@@ -9,7 +9,7 @@ import lombok.Getter;
 public class ShowInfoDTO {
 
     // 공연 정보 고유 번호
-    private Long id;
+    private Integer id;
 
     // 공연 제목
     private String name;

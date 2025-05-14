@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface ShowInfoRepository extends JpaRepository<ShowInfo, Long>, JpaSpecificationExecutor<ShowInfo> {
+public interface ShowInfoRepository extends JpaRepository<ShowInfo, Integer>, JpaSpecificationExecutor<ShowInfo> {
 
     // 종료되지 않은 공연만 조회 (정렬, 페이징 포함)
     Page<ShowInfo> findByShowsShowStateNot(int showState, Pageable pageable);
