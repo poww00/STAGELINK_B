@@ -12,5 +12,6 @@ public interface ShowService {
     // 공연 상세 조회
     ShowDTO getShow(Integer showNo);
 
-    List<ShowDTO> getAvailableShows(); // [추가] 예매 가능한 공연만 조회
+    // 특정 상태값을 기준으로 공연 조회
+    List<ShowDTO> getShowsByStates(List<Integer> states);
 }

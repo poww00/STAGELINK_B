@@ -4,10 +4,7 @@ import com.pro.dto.ShowDTO;
 import com.pro.service.ShowService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,9 +27,9 @@ public class ShowController {
         return ResponseEntity.ok(showService.getShow(id));
     }
 
-    // 현재 예매 가능한 공연만 조회 (판매중 상태)
-    @GetMapping("/shows/available")
-    public ResponseEntity<List<ShowDTO>> getAvailableShows() {
-        return ResponseEntity.ok(showService.getAvailableShows());
+    // 특정 상태의 공연 조회
+    @GetMapping("/shows/titles")
+    public ResponseEntity<List<ShowDTO>> getShowsByStates(@RequestParam List<Integer> states) {
+        return ResponseEntity.ok(showService.getShowsByStates(states));
     }
 }

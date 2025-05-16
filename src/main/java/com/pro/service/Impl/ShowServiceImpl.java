@@ -38,11 +38,12 @@ public class ShowServiceImpl implements ShowService {
                 .collect(Collectors.toList());
     }
 
+    // 특정 상태인 공연 조회
     @Override
-    public List<ShowDTO> getAvailableShows() {
+    public List<ShowDTO> getShowsByStates(List<Integer> states) {
         return showRepository.findAll()
                 .stream()
-                .filter(show -> show.getShowState() == 1) // 판매중 상태인 공연만 필터링
+                .filter(show -> states.contains(show.getShowState()))
                 .map(ShowDTO::fromEntity)
                 .collect(Collectors.toList());
     }
