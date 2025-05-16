@@ -2,64 +2,90 @@ package com.pro.service;
 
 import com.pro.dto.PostRequestDto;
 import com.pro.dto.PostResponseDto;
+import com.pro.entity.Member;
 import com.pro.entity.Post;
+import com.pro.entity.Show;
+import com.pro.repository.MemberRepository;
 import com.pro.repository.PostRepository;
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
 
-    // 게시글 전체 조회
+    @PersistenceContext
+    private EntityManager em;
+
+    public PostService(PostRepository postRepository, MemberRepository memberRepository) {
+        this.postRepository = postRepository;
+        this.memberRepository = memberRepository;
+    }
+
+    @Transactional
+    public void savePost(PostRequestDto dto, Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow();
+
+        Show show = em.createQuery("SELECT s FROM Show s WHERE s.showNo = :no", Show.class)
+                .setParameter("no", dto.getPostShowNo())
+                .getSingleResult();
+
+        Post post = new Post();
+        post.setMember(member);
+        post.setNickname(member.getNickname()); // 복사 저장
+        post.setShow(show);
+        post.setPostTitle(dto.getPostTitle());
+        post.setPostContent(dto.getPostContent());
+        post.setPostRating(dto.getPostRating());
+        post.setPostRegisterDate(LocalDateTime.now());
+        post.setPostReportCount(0);
+
+        postRepository.save(post);
+    }
+
     public List<PostResponseDto> getAllPosts() {
         return postRepository.findAll().stream()
-                .map(PostResponseDto::new)
+                .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
-    // 게시글 상세 조회
-    public PostResponseDto getPostById(Long id) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
-        return new PostResponseDto(post);
+    public PostResponseDto getPostById(int postNo) {
+        Post post = postRepository.findById(postNo).orElseThrow();
+        return toDto(post);
     }
 
-    // 게시글 작성
-    public PostResponseDto createPost(PostRequestDto dto) {
-        Post post = new Post();
-        post.setMemberNo(dto.getMemberNo());
-        post.setTitle(dto.getTitle());
-        post.setContent(dto.getContent());
-        post.setRating(dto.getRating());
-        post.setNickname(dto.getNickname()); // 닉네임 저장
-        post = postRepository.save(post);
-        return new PostResponseDto(post);
-
+    public List<PostResponseDto> getPostsByShowState(int state) {
+        return postRepository.findByShow_ShowState(state).stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
 
-    // 게시글 삭제
-    public void deletePost(Long id) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
-        postRepository.delete(post);
+    private PostResponseDto toDto(Post post) {
+        String showName = null;
+        try {
+            if (post.getShow() != null && post.getShow().getShowInfo() != null) {
+                showName = post.getShow().getShowInfo().getName();
+            }
+        } catch (Exception e) {
+            System.out.println("❗ 공연 이름 가져오기 실패: " + e.getMessage());
+        }
+
+        return new PostResponseDto(
+                post.getPostNo(),
+                post.getPostTitle(),
+                post.getPostContent(),
+                post.getPostRating(),
+                post.getNickname(),
+                post.getPostRegisterDate() != null ? post.getPostRegisterDate().toString() : null,
+                showName
+        );
     }
-
-    // 게시글 수정
-    public PostResponseDto updatePost(Long id, PostRequestDto dto) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
-
-        post.setTitle(dto.getTitle());
-        post.setContent(dto.getContent());
-
-        Post updatedPost = postRepository.save(post);
-        return new PostResponseDto(updatedPost);
-    }
-
 }
