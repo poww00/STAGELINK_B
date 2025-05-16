@@ -4,6 +4,9 @@ import com.pro.dto.ShowDTO;
 import com.pro.entity.Show;
 import com.pro.repository.ShowRepository;
 import com.pro.service.ShowService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,11 +43,17 @@ public class ShowServiceImpl implements ShowService {
 
     // 특정 상태인 공연 조회
     @Override
-    public List<ShowDTO> getShowsByStates(List<Integer> states) {
-        return showRepository.findAll()
+    public Page<ShowDTO> getShowsByStates(List<Integer> states, int page, int size) {
+        List<ShowDTO> filteredList = showRepository.findAll()
                 .stream()
                 .filter(show -> states.contains(show.getShowState()))
                 .map(ShowDTO::fromEntity)
                 .collect(Collectors.toList());
+
+        int start = Math.min(page * size, filteredList.size());
+        int end = Math.min(start + size, filteredList.size());
+
+        List<ShowDTO> pagedList = filteredList.subList(start, end);
+        return new PageImpl<>(pagedList, PageRequest.of(page, size), filteredList.size());
     }
 }
