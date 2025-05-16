@@ -3,49 +3,39 @@ package com.pro.controller;
 import com.pro.dto.PostRequestDto;
 import com.pro.dto.PostResponseDto;
 import com.pro.service.PostService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/community/posts")
-@RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
 
-    // 게시글 전체 조회
-    @GetMapping
-    public ResponseEntity<List<PostResponseDto>> getPostList() {
-        return ResponseEntity.ok(postService.getAllPosts());
+    public PostController(PostService postService) {
+        this.postService = postService;
     }
 
-    // 게시글 상세 조회
-    @GetMapping("/{id}")
-    public ResponseEntity<PostResponseDto> getPostById(@PathVariable Long id) {
-        return ResponseEntity.ok(postService.getPostById(id));
-    }
-
-    // 게시글 작성
     @PostMapping
-    public ResponseEntity<PostResponseDto> createPost(@RequestBody PostRequestDto dto) {
-        return ResponseEntity.ok(postService.createPost(dto));
+    public void createPost(@RequestBody PostRequestDto dto, HttpServletRequest request) {
+        Long memberId = Long.valueOf((int) request.getAttribute("memberNo"));
+        postService.savePost(dto, memberId);
     }
 
-    // 게시글 삭제
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable Long id) {
-        postService.deletePost(id);
-        return ResponseEntity.ok("게시글 삭제 완료");
-    }
-    
-    // 게시글 수정
-    @PutMapping("/{id}")
-    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long id,
-                                                      @RequestBody PostRequestDto dto) {
-        return ResponseEntity.ok(postService.updatePost(id, dto));
+    @GetMapping
+    public List<PostResponseDto> getAllPosts() {
+        return postService.getAllPosts();
     }
 
+    @GetMapping("/{postNo}")
+    public PostResponseDto getPostDetail(@PathVariable int postNo) {
+        return postService.getPostById(postNo);
+    }
+
+    @GetMapping("/state/{state}")
+    public List<PostResponseDto> getPostsByState(@PathVariable int state) {
+        return postService.getPostsByShowState(state);
+    }
 }

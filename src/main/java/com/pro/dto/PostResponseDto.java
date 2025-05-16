@@ -1,32 +1,33 @@
 package com.pro.dto;
 
-import com.pro.entity.Post;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
+
 public class PostResponseDto {
-
-    private Long postNo;
-    private Long memberNo;
-    private String title;
-    private String content;
-    private LocalDateTime registerDate;
-    private Integer rating;
+    private int postNo;
+    private String postTitle;
+    private String postContent;
+    private int postRating;
     private String nickname;
+    private String postRegisterDate;
+    private String showName;
 
+    public PostResponseDto() {}
 
-    //  Post 엔티티를 Dto로 변환하는 생성자
-    public PostResponseDto(Post post) {
-        this.postNo = post.getPostNo();
-        this.memberNo = post.getMemberNo();
-        this.title = post.getTitle();
-        this.content = post.getContent();
-        this.registerDate = post.getRegisterDate();
-        this.rating = post.getRating();
-        this.nickname = post.getNickname();
+    public PostResponseDto(int postNo, String postTitle, String postContent,
+                           int postRating, String nickname, String postRegisterDate,
+                           String showName) {
+        this.postNo = postNo;
+        this.postTitle = postTitle;
+        this.postContent = postContent;
+        this.postRating = postRating;
+        this.nickname = nickname;
+        this.postRegisterDate = postRegisterDate;
+        this.showName = showName;
     }
+
+    // Getter/Setter 생략 가능
 }

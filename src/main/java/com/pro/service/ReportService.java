@@ -15,8 +15,8 @@ public class ReportService {
     public void reportPost(ReportRequestDto dto) {
         Report report = new Report();
         report.setPostNo(dto.getPostNo());                    // 신고 대상 게시글 번호
-        report.setReportedMember(dto.getReportedMember());    // 피신고자
-        report.setReporterMember(dto.getReporterMember());    // 신고자
+        report.setSuspectId(dto.getSuspectId());    // 피신고자
+        report.setReportedId(dto.getReportedId());    // 신고자
         report.setReportReason(dto.getReportReason());        // 신고 사유
 
         reportRepository.save(report);

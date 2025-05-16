@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
     // 한 사용자가 같은 게시글을 신고한 적 있는지 확인
-    Optional<Report> findByPostNoAndReporterMember(Long postNo, Long reporterMember);
+    Optional<Report> findByPostNoAndReportedId(Long postNo, Long reporterMember);
 }

@@ -21,11 +21,11 @@ public class Report {
     @Column(name = "post_no", nullable = false)
     private Long postNo;  // 게시글 번호 (또는 댓글 대상 글 번호)
 
-    @Column(name = "reported_member", nullable = false)
-    private Long reportedMember;  // 피신고자 회원 번호
+    @Column(name = "suspect_id", nullable = false)
+    private Long suspectId;  // 피신고자 회원 번호
 
-    @Column(name = "reporter_member", nullable = false)
-    private Long reporterMember;  // 신고자 회원 번호
+    @Column(name = "reported_id", nullable = false)
+    private Long reportedId;  // 신고자 회원 번호
 
     @Column(name = "report_date")
     private LocalDateTime reportDate = LocalDateTime.now();  // 신고일

@@ -40,7 +40,7 @@ public class QnaService {
     public QnaResponseDto updateRating(Long id, QnaRatingDto dto) {
         Qna qna = qnaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("QnA 글을 찾을 수 없습니다."));
-        qna.setRating(dto.getRating());
+        qna.setQnaRating(dto.getRating());
         Qna updated = qnaRepository.save(qna);
         return new QnaResponseDto(updated);
     }

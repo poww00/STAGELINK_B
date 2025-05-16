@@ -1,35 +1,45 @@
 package com.pro.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "tbl_post")
+@Table(name = "TBL_POST")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postNo; // 게시글 번호 (PK)
+    @Column(name = "POST_NO")
+    private int postNo;
 
-    private Long memberNo; // 작성자 회원 번호
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MEMBER_NO")  // 정확하게 FK 컬럼명에 맞춰야 함
+    private Member member;
 
-    private String title; // 게시글 제목
+    @Column(name = "NICKNAME", nullable = false, length = 20)
+    private String nickname;
 
-    @Column(columnDefinition = "TEXT")
-    private String content; // 게시글 내용
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "POST_SHOW_NO", nullable = false)
+    private Show show;
 
-    private LocalDateTime registerDate = LocalDateTime.now(); // 작성일시
+    @Column(name = "POST_TITLE", nullable = false, length = 50)
+    private String postTitle;
 
-    @Column(name = "rating")
-    private Integer rating; // 1~5점 정수형 별점
+    @Column(name = "POST_CONTENT", nullable = false, length = 1000)
+    private String postContent;
 
-    @Column(name = "nickname", length = 20)
-    private String nickname;    // 닉네임
+    @Column(name = "POST_RATING")
+    private int postRating;
 
+    @Column(name = "POST_REGISTER_DATE")
+    private LocalDateTime postRegisterDate;
+
+    @Column(name = "POST_REPORT_COUNT")
+    private int postReportCount;
 }
