@@ -32,6 +32,6 @@ public class Qna {
     @Column(name = "create_date", updatable = false)
     private LocalDateTime createDate;
 
-    @Column(name = "rating")
-    private Integer rating;
+    @Column(name = "qna_rating")
+    private Integer qnaRating;
 }

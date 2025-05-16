@@ -5,7 +5,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class QnaResponseDto {
@@ -14,7 +15,7 @@ public class QnaResponseDto {
     private String questionContents;
     private String answerContents;
     private LocalDateTime createDate;
-    private Integer rating;
+    private Integer qnaRating;
 
     public QnaResponseDto(Qna qna) {
         this.questionNo = qna.getQuestionNo();
@@ -22,6 +23,6 @@ public class QnaResponseDto {
         this.questionContents = qna.getQuestionContents();
         this.answerContents = qna.getAnswerContents();
         this.createDate = qna.getCreateDate();
-        this.rating = qna.getRating();
+        this.qnaRating = qna.getQnaRating(); // ✅ 기존 필드와 매핑
     }
 }
