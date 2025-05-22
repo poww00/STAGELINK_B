@@ -37,6 +37,9 @@ public class ShowDTO {
     // 공연 상태 코드 (0: 판매예정, 1: 판매중, 2: 품절, 3: 예약종료, 4: 진행중, 5: 종료)
     private Integer showState;
 
+    // 공연 제목
+    private String showTitle;
+
     // Show 엔티티를 DTO로 변환하는 정적 메서드
     public static ShowDTO fromEntity(Show show) {
         return ShowDTO.builder()
@@ -49,6 +52,7 @@ public class ShowDTO {
                 .seatSPrice(show.getSeatSPrice())
                 .seatVipPrice(show.getSeatVipPrice())
                 .showState(show.getShowState())
+                .showTitle(show.getShowInfo().getName())
                 .build();
     }
 }

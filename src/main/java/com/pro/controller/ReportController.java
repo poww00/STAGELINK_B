@@ -13,13 +13,14 @@ public class ReportController {
 
     private final ReportService reportService;
 
-    @PostMapping("/{postNo}/report")
-    public ResponseEntity<String> reportPost(@PathVariable Long postNo, @RequestBody ReportRequestDto dto) {
-        dto.setPostNo(postNo); // 직접 DTO에 세팅
+    @PostMapping("/{id}/report")
+    public ResponseEntity<String> reportPost(
+            @PathVariable("id") Long postNo,
+            @RequestBody ReportRequestDto dto
+    ) {
         reportService.reportPost(dto);
-        return ResponseEntity.ok("게시글이 신고되었습니다.");
+        return ResponseEntity.ok("게시글 신고가 접수되었습니다.");
     }
-
 
 
 }

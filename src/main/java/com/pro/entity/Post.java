@@ -18,7 +18,7 @@ public class Post {
     private int postNo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MEMBER_NO")  // 정확하게 FK 컬럼명에 맞춰야 함
+    @JoinColumn(name = "member", nullable = false) // member로 수정
     private Member member;
 
     @Column(name = "NICKNAME", nullable = false, length = 20)

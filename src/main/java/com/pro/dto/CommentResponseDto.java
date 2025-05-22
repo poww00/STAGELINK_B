@@ -10,24 +10,23 @@ import java.time.LocalDateTime;
 @Setter
 public class CommentResponseDto {
 
-    private Long commentNo;
-    private Long postNo;
-    private Long member;
-    private LocalDateTime commentRegisterDate;
-    private String commentContent;
-    private Integer commentRating;
-    private Integer commentReportCount;
-    private String nickname;
-
+    private Long commentNo;              // COMMENT_NO
+    private Long postNo;                 // POST_NO
+    private String nickname;             // NICKNAME
+    private Long member;                 // MEMBER
+    private LocalDateTime commentRegisterDate;   // COMMENT_REGISTER_DATE
+    private String commentContent;       // COMMENT_CONTENT
+    private Integer commentRating;       // COMMENT_RATING
+    private Integer commentReportCount;  // COMMENT_REPORT_COUNT
 
     public CommentResponseDto(Comment comment) {
         this.commentNo = comment.getCommentNo();
         this.postNo = comment.getPostNo();
-        this.member = comment.getMemberNo();
+        this.nickname = comment.getNickname();
+        this.member = comment.getMember(); // member로 수정
         this.commentRegisterDate = comment.getCommentRegisterDate();
-        this.commentContent = comment.getContent();
+        this.commentContent = comment.getCommentContent();
         this.commentRating = comment.getCommentRating();
         this.commentReportCount = comment.getCommentReportCount();
-        this.nickname = comment.getNickname();
     }
 }

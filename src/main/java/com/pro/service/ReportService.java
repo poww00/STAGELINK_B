@@ -6,6 +6,8 @@ import com.pro.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class ReportService {
@@ -18,6 +20,7 @@ public class ReportService {
         report.setSuspectId(dto.getSuspectId());    // 피신고자
         report.setReportedId(dto.getReportedId());    // 신고자
         report.setReportReason(dto.getReportReason());        // 신고 사유
+        report.setReportDate(LocalDateTime.now());      // 신고 날짜
 
         reportRepository.save(report);
     }
