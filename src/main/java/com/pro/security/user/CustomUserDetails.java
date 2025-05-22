@@ -14,11 +14,25 @@ public class CustomUserDetails implements UserDetails {
 
     private final Member member;
 
+    // 컨트롤러에서 유저 식별자를 꺼내기 위한 getter
+    public Long getId() {
+        return member.getId(); // DB의 PK
+    }
+
+    public String getUserId() {
+        return member.getUserId(); // 아이디
+    }
+
+    public String getNickname() {
+        return member.getNickname();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(() -> "ROLE_USER"); // 사용자 권한 하나로 고정
     }
 
+    // 로그인 시 필요한 정보 반환
     @Override
     public String getPassword() { // 사용자 비밀번호 반환
         return member.getPassword();

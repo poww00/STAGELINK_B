@@ -1,6 +1,9 @@
 package com.pro.controller.member;
 
 import com.pro.dto.LoginRequestDto;
+import com.pro.dto.LoginResponseDto;
+import com.pro.entity.Member;
+import com.pro.repository.MemberRepository;
 import com.pro.security.JwtTokenProvider;
 import com.pro.security.jwt.JwtTokenDto;
 import com.pro.service.MemberService;
@@ -9,31 +12,45 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/")
 public class AuthController {
 
     private final MemberService memberService;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
+    private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<JwtTokenDto> login(@RequestBody LoginRequestDto dto) {
-        return ResponseEntity.ok(memberService.login(dto.getUserId(), dto.getPassword()));
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto) {
+        Member member = memberService.login(dto.getUserId(), dto.getPassword());
+        JwtTokenDto token = jwtTokenProvider.generateToken(member);
+
+        return ResponseEntity.ok(LoginResponseDto.builder()
+                .accessToken(token.getAccessToken())
+                .refreshToken(token.getRefreshToken())
+                .nickname(member.getNickname())
+                .email(member.getUserEmail())
+                .build());
     }
 
+
+    // 로그아웃
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
+        log.info("로그아웃 요청 도착");
         String token = resolveToken(request);
+        log.info("요청 토큰: {}", token);
 
         if (token != null && jwtTokenProvider.validateToken(token)) {
             String userId = jwtTokenProvider.getUserIdFromToken(token);
@@ -42,7 +59,7 @@ public class AuthController {
         return ResponseEntity.ok().body("로그아웃 되었습니다.");
     }
 
-    // 재발급
+    // 토큰 재발급
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestBody JwtTokenDto requestDto) {
         String refreshToken = requestDto.getRefreshToken();
@@ -76,10 +93,14 @@ public class AuthController {
         }
 
         // 모든 검증 통과 시 새로운 토큰 발급 & 저장
-        JwtTokenDto newToken = jwtTokenProvider.generateToken(userId);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 유저 없음"));
+
+        JwtTokenDto newToken = jwtTokenProvider.generateToken(member);
         refreshTokenService.save(userId, newToken.getRefreshToken());
 
         return ResponseEntity.ok(newToken);
+
     }
 
     // 헤더에서 토큰을 꺼냄

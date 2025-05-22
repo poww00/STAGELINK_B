@@ -1,0 +1,3 @@
+kakao:
+  client-id: b091ffe9d528c36f11e4e8039b16c8aa
+  redirect-uri: http://localhost:3000/member/kakao

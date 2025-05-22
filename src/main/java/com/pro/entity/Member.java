@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "TBL_MEMBER")
 @ToString(exclude = "password")
 @Builder
@@ -24,21 +25,14 @@ public class Member {
     private String userId;  // 로그인용 ID
     @Column(name = "PASSWORD", nullable = false)
     private String password;
-    @Column(name = "NAME",length = 10, nullable = false)
+    @Column(name = "NAME",length = 10)
     private String name;
 
-    @Column(name = "BIRTHDAY", nullable = false)
+    @Column(name = "BIRTHDAY")
     private LocalDate birthday;
 
-    /*   현재 티켓 수령 방식: 현장 수령으로 사용X
-    @Column(name = "POST_NO", length = 50)
-    private String postNo;
-    @Column(name = "ADDRESS", length = 50)
-    private String address;
-    */
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "GENDER", nullable = false)
+    @Column(name = "GENDER")
     private Gender gender;
     @Column(name = "NICKNAME", length = 20, nullable = false)
     private String nickname;
