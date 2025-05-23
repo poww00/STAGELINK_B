@@ -66,10 +66,7 @@ public class Show {
     @Column(name = "SEAT_VIP_COUNT", nullable = false)
     private Integer seatVipCount;
 
-    /*
-     공연 상태
-     0: 판매 예정, 1: 판매 중, 2: 품절, 3: 예약 종료, 4: 진행중, 5: 종료
-     */
+    // 공연 상태  0: 판매예정, 1: 판매중, 2: 예약종료(품절)
     @Column(name = "SHOW_STATE", nullable = false, length = 1)
     private Integer showState;
 }
