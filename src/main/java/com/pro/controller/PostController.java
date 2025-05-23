@@ -15,7 +15,7 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
-    private final boolean devMode = true; // ✅ 테스트용 모드
+    private final boolean devMode = false; // true/false
 
     @PostMapping
     public void createPost(@RequestBody PostRequestDto dto, HttpServletRequest request) {
