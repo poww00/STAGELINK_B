@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 @Slf4j
 @Configuration
 public class SecurityConfig {
@@ -29,6 +31,7 @@ public class SecurityConfig {
         log.info("Jwt 필터 등록 진행 중...");
 
         http
+                .cors(withDefaults())// cors 설정
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -37,7 +40,7 @@ public class SecurityConfig {
                         .anyRequest().permitAll() // 그 외 모든 요청 허용
                 );
 
-        // JWT 인증 필터 등록 (예: JwtAuthenticationFilter)
+        // JWT 인증 필터 등록
         http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
                 UsernamePasswordAuthenticationFilter.class);
 

@@ -1,5 +1,6 @@
 package com.pro.security;
 
+import com.pro.entity.Member;
 import com.pro.security.jwt.JwtTokenDto;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -37,20 +38,22 @@ public class JwtTokenProvider {
     }
 
     // AcessToken, RefreshToken 생성
-    public JwtTokenDto generateToken(String userId) {
+    public JwtTokenDto generateToken(Member member) {
         Date now = new Date();
         Date accessTokenExpires = new Date(now.getTime() + ACCESS_TOKEN_VALIDITY);
         Date refreshTokenExpires = new Date(now.getTime() + REFRESH_TOKEN_VALIDITY);
 
         String accessToken = Jwts.builder()
-                .setSubject(userId) // 사용자 식별 정보
+                .setSubject(member.getUserId()) // sub: 로그인용 아이디
+                .claim("id", member.getId()) // id: DB PK
+                .claim("nickname", member.getNickname()) // 사용자 닉네임
                 .setIssuedAt(now)
                 .setExpiration(accessTokenExpires) // 만료시간 설정
                 .signWith(key, SignatureAlgorithm.HS256) //서명 HS256 알고리즘
                 .compact();
 
         String refreshToken = Jwts.builder()
-                .setSubject(userId)
+                .setSubject(member.getUserId())
                 .setIssuedAt(now)
                 .setExpiration(refreshTokenExpires)
                 .signWith(key, SignatureAlgorithm.HS256)
