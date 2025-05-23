@@ -17,7 +17,7 @@ import java.util.List;
 public class QnaController {
 
     private final QnaService qnaService;
-    private final boolean devMode = true; //  테스트용 모드
+    private final boolean devMode = false; //  테스트용 모드
 
     @GetMapping
     public ResponseEntity<List<QnaResponseDto>> getQnaList() {
