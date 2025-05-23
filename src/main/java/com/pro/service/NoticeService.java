@@ -4,6 +4,7 @@ import com.pro.dto.NoticeResponseDto;
 import com.pro.entity.Notice;
 import com.pro.repository.NoticeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class NoticeService {
     private final NoticeRepository noticeRepository;
 
     public List<NoticeResponseDto> getAllNotices() {
-        return noticeRepository.findAll().stream()
+        return noticeRepository.findAll(Sort.by(Sort.Direction.DESC, "noticeDate")).stream()
                 .map(NoticeResponseDto::new)
                 .collect(Collectors.toList());
     }

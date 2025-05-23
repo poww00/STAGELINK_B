@@ -14,33 +14,45 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommentService {
 
-    private final CommentRepository commentRepository; // 댓글 관련 DB 작업을 담당하는 리포지토리
+    private final CommentRepository commentRepository;
 
-    // 특정 게시글(postNo)에 달린 모든 댓글을 조회하는 메서드
-    public List<CommentResponseDto> getCommentsByPost(Long postNo) {
+    // 댓글 작성
+    public CommentResponseDto createComment(CommentRequestDto dto) {
+        Comment comment = new Comment();
+        comment.setPostNo(dto.getPostNo());
+        comment.setMember(dto.getMember()); // member 로 수정
+        comment.setNickname(dto.getNickname());
+        comment.setCommentContent(dto.getCommentContent());
+        comment.setCommentRating(dto.getCommentRating());
+        Comment saved = commentRepository.save(comment);
+        return new CommentResponseDto(saved);
+    }
+
+    // 게시글별 댓글 목록 조회
+    public List<CommentResponseDto> getCommentsByPostNo(Long postNo) {
         return commentRepository.findByPostNo(postNo).stream()
-                .map(CommentResponseDto::new) // Comment -> CommentResponseDto로 변환
+                .map(CommentResponseDto::new)
                 .collect(Collectors.toList());
     }
 
-    // 댓글 작성 메서드
-    public CommentResponseDto createComment(CommentRequestDto dto) {
-        Comment comment = new Comment();
-        comment.setPostNo(dto.getPostNo());         // 댓글이 달린 게시글 번호
-        comment.setMemberNo(dto.getMemberNo());     // 댓글 작성자 회원 번호
-        comment.setContent(dto.getContent());       // 댓글 내용
-        comment.setNickname(dto.getNickname()); // 닉네임 저장
-
-
-        comment = commentRepository.save(comment);  // DB에 저장
-
-        return new CommentResponseDto(comment);     // 저장된 댓글을 DTO로 변환해서 반환
+    // 댓글 신고
+    public void reportComment(Long commentNo) {
+        Comment comment = commentRepository.findById(commentNo)
+                .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
+        comment.setCommentReportCount(comment.getCommentReportCount() + 1);
+        commentRepository.save(comment);
     }
 
-    // 댓글 삭제 메서드
-    public void deleteComment(Long id) {
-        Comment comment = commentRepository.findById(id) // 해당 ID의 댓글이 있는지 조회
+    // 댓글 삭제
+    public void deleteComment(Long commentNo, Long memberNo) {
+        Comment comment = commentRepository.findById(commentNo)
                 .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
-        commentRepository.delete(comment); // 댓글 삭제
+
+        // 작성자만 삭제 가능
+        if (!comment.getMember().equals(memberNo)) {
+            throw new RuntimeException("작성자만 댓글을 삭제할 수 있습니다.");
+        }
+
+        commentRepository.delete(comment);
     }
 }

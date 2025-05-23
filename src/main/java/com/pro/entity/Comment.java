@@ -22,13 +22,14 @@ public class Comment {
     private Long postNo;     // 게시글 번호
 
     @Column(name = "member", nullable = false)
-    private Long memberNo;     // 회원 번호
+    private Long member;  // 회원 번호
+
 
     @Column(name = "comment_register_date")
     private LocalDateTime commentRegisterDate = LocalDateTime.now();  // 작성일
 
     @Column(name = "comment_content", length = 500)
-    private String content;  // 댓글 내용
+    private String commentContent;  // 댓글 내용
 
     @Column(name = "comment_rating")
     private Integer commentRating;  // 평점 (1~5점)
