@@ -15,4 +15,5 @@ public interface ShowService {
 
     // 특정 상태값을 기준으로 공연 조회
     Page<ShowDTO> getShowsByStates(List<Integer> states, int page, int size);
+
 }

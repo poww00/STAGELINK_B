@@ -34,9 +34,14 @@ public class Reservation {
 
     // 좌석 ID
     @Column(name = "SEAT_ID", nullable = false)
-    private Integer seatId;
+    private Long seatId;
 
     // 예매 날짜
     @Column(name = "RESERVATION_DATE", nullable = false)
     private LocalDateTime reservationDate;
+
+    //좌석 상태
+    @Enumerated(EnumType.STRING)
+    @Column(name = "STATUS", nullable = false)
+    private ReservationStatus status;
 }

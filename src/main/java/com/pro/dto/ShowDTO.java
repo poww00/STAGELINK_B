@@ -34,6 +34,18 @@ public class ShowDTO {
     // VIP석 가격
     private Integer seatVipPrice;
 
+    //R좌석 갯수
+    private Integer seatRCount;
+
+    //S좌석 갯수
+    private Integer seatSCount;
+
+    //A좌석 갯수
+    private Integer seatACount;
+
+    //VIP좌석 갯수
+    private Integer seatVipCount;
+
     // 공연 상태 코드 (0: 판매예정, 1: 판매중, 2: 품절, 3: 예약종료, 4: 진행중, 5: 종료)
     private Integer showState;
 
@@ -51,6 +63,10 @@ public class ShowDTO {
                 .seatAPrice(show.getSeatAPrice())
                 .seatSPrice(show.getSeatSPrice())
                 .seatVipPrice(show.getSeatVipPrice())
+                .seatRCount(show.getSeatRCount())
+                .seatSCount(show.getSeatSCount())
+                .seatACount(show.getSeatACount())
+                .seatVipCount(show.getSeatVipCount())
                 .showState(show.getShowState())
                 .showTitle(show.getShowInfo().getName())
                 .build();

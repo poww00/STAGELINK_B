@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
+    boolean existsBySeatId(Long seatId);
+
     // 전체 공연 판매량 순
     @Query(value = "SELECT r.show_no, COUNT(*) AS cnt " +
             "FROM tbl_reservation r " +

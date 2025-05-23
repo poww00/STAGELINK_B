@@ -62,4 +62,28 @@ public class ShowInfoController {
         Page<ShowInfoDTO> filtered = showInfoService.filterByCategory(category, page, size);
         return ResponseEntity.ok(filtered);
     }
+/*
+    // 배우명 검색 추가
+    @GetMapping("/search/actor")
+    public ResponseEntity<Page<ShowInfoDTO>> searchByActor(
+            @RequestParam String actorName,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+
+        Page<ShowInfoDTO> result = showInfoService.searchByActor(actorName, page, size);
+        return ResponseEntity.ok(result);
+    }
+
+    // 공연장명 검색 추가
+    @GetMapping("/search/location")
+    public ResponseEntity<Page<ShowInfoDTO>> searchByLocation(
+            @RequestParam String locationName,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+
+        Page<ShowInfoDTO> result = showInfoService.searchByLocation(locationName, page, size);
+        return ResponseEntity.ok(result);
+    }
+
+ */
 }
