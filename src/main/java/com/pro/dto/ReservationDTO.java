@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 public class ReservationDTO {
-    private Long memberId;
+    private Long userId; // memberId → userId
     private Long showId;
     private List<Long> seatIdList;
     private Integer totalAmount;

@@ -22,9 +22,9 @@ public class ShowLikesService {
      * 공연 찜 추가
      */
     @Transactional
-    public void addLike(Long showNo, Long memberId) {
+    public void addLike(Long showNo, Long userId) {
         Show show = Show.builder().showNo(showNo).build();
-        Member member = Member.builder().id(memberId).build();
+        Member member = Member.builder().id(userId).build();
 
         if (!showLikesRepository.existsByShowAndMember(show, member)) {
             ShowLikes like = ShowLikes.builder().show(show).member(member).build();
@@ -36,9 +36,9 @@ public class ShowLikesService {
      * 공연 찜 삭제
      */
     @Transactional
-    public void removeLike(Long showNo, Long memberId) {
+    public void removeLike(Long showNo, Long userId) {
         Show show = Show.builder().showNo(showNo).build();
-        Member member = Member.builder().id(memberId).build();
+        Member member = Member.builder().id(userId).build();
 
         showLikesRepository.deleteByShowAndMember(show, member);
     }
@@ -47,9 +47,9 @@ public class ShowLikesService {
      * 찜 여부 확인
      */
     @Transactional(readOnly = true)
-    public boolean isLiked(Long showNo, Long memberId) {
+    public boolean isLiked(Long showNo, Long userId) {
         Show show = Show.builder().showNo(showNo).build();
-        Member member = Member.builder().id(memberId).build();
+        Member member = Member.builder().id(userId).build();
 
         return showLikesRepository.existsByShowAndMember(show, member);
     }

@@ -1,4 +1,3 @@
-// src/main/java/com/pro/controller/reservation/ReservationController.java
 package com.pro.controller.reservation;
 
 import com.pro.dto.ReservationDTO;

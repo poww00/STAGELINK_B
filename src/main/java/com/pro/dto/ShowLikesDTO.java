@@ -10,5 +10,5 @@ import lombok.*;
 public class ShowLikesDTO {
     private Integer likeNo;
     private Integer showNo;
-    private Integer memberNo;
+    private Integer userId; // memberNo → userId로 변경
 }
