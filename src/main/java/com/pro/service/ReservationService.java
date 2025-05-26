@@ -1,7 +1,6 @@
 package com.pro.service;
 
 import com.pro.dto.ReservationDTO;
-
 import com.pro.entity.*;
 import com.pro.repository.MemberRepository;
 import com.pro.repository.ReservationRepository;
@@ -32,7 +31,7 @@ public class ReservationService {
         Show show = showRepository.findById(dto.getShowId().intValue())
                 .orElseThrow(() -> new IllegalArgumentException("해당 공연이 존재하지 않습니다."));
 
-        Member member = memberRepository.findById(dto.getMemberId())
+        Member member = memberRepository.findById(dto.getUserId()) // memberId → userId
                 .orElseThrow(() -> new IllegalArgumentException("회원 정보가 존재하지 않습니다."));
 
         // ✅ 예약 날짜가 없으면 현재시간(LocalDateTime.now())로 대체!
