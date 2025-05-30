@@ -28,45 +28,34 @@ public class PostService {
     @PersistenceContext
     private EntityManager em;
 
-    /**
-     * 게시글 저장
-     */
     @Transactional
-    public void savePost(PostRequestDto dto, Long memberId) {
-        try {
-            Member member = memberRepository.findById(memberId)
-                    .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+    public void savePost(PostRequestDto dto, Long member) {
+        Member writer = memberRepository.findById(member)
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
 
-            Show show = em.createQuery("SELECT s FROM Show s WHERE s.showNo = :no", Show.class)
-                    .setParameter("no", dto.getPostShowNo())
-                    .getSingleResult();
+        Show show = em.createQuery("SELECT s FROM Show s WHERE s.showNo = :no", Show.class)
+                .setParameter("no", dto.getPostShowNo())
+                .getSingleResult();
 
-            Post post = new Post();
-            post.setMember(member); // 컬럼명은 member (기존 member_no 아님)
-            post.setNickname(member.getNickname());
-            post.setShow(show);
-            post.setPostTitle(dto.getPostTitle());
-            post.setPostContent(dto.getPostContent());
-            post.setPostRating(dto.getPostRating());
-            post.setPostRegisterDate(LocalDateTime.now());
-            post.setPostReportCount(0);
+        Post post = new Post();
+        post.setMember(writer);
+        post.setNickname(writer.getNickname());
+        post.setShow(show);
+        post.setPostTitle(dto.getPostTitle());
+        post.setPostContent(dto.getPostContent());
+        post.setPostRating(dto.getPostRating());
+        post.setPostRegisterDate(LocalDateTime.now());
+        post.setPostReportCount(0);
 
-            postRepository.save(post);
-
-        } catch (Exception e) {
-            throw new RuntimeException("게시글 저장 실패", e);
-        }
+        postRepository.save(post);
     }
 
-    /**
-     * 게시글 수정
-     */
     @Transactional
-    public void updatePost(int postNo, PostRequestDto dto, Long memberId) {
+    public void updatePost(int postNo, PostRequestDto dto, Long member) {
         Post post = postRepository.findById(postNo)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
 
-        if (!post.getMember().getId().equals(memberId)) {
+        if (!post.getMember().getId().equals(member)) {
             throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
         }
 
@@ -84,50 +73,36 @@ public class PostService {
         postRepository.save(post);
     }
 
-    /**
-     * 게시글 삭제
-     */
     @Transactional
-    public void deletePost(int postNo, Long memberId, boolean devMode) {
+    public void deletePost(int postNo, Long member) {
         Post post = postRepository.findById(postNo)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
 
-        if (!devMode && !post.getMember().getId().equals(memberId)) {
+        if (!post.getMember().getId().equals(member)) {
             throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
         }
 
         postRepository.delete(post);
     }
 
-    /**
-     * 전체 게시글 조회
-     */
     public List<PostResponseDto> getAllPosts() {
         return postRepository.findAll(Sort.by(Sort.Direction.DESC, "postRegisterDate")).stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * 게시글 상세 조회
-     */
     public PostResponseDto getPostById(int postNo) {
-        Post post = postRepository.findById(postNo).orElseThrow();
+        Post post = postRepository.findById(postNo)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
         return toDto(post);
     }
 
-    /**
-     * 공연 상태별 게시글 조회
-     */
     public List<PostResponseDto> getPostsByShowState(int state) {
         return postRepository.findByShow_ShowState(state, Sort.by(Sort.Direction.DESC, "postRegisterDate")).stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Post → PostResponseDto 변환
-     */
     private PostResponseDto toDto(Post post) {
         String showName = null;
         try {
@@ -135,7 +110,7 @@ public class PostService {
                 showName = post.getShow().getShowInfo().getName();
             }
         } catch (Exception e) {
-            System.out.println("❗ 공연 이름 가져오기 실패: " + e.getMessage());
+            System.out.println("공연 이름 가져오기 실패: " + e.getMessage());
         }
 
         return new PostResponseDto(
@@ -146,7 +121,7 @@ public class PostService {
                 post.getNickname(),
                 post.getPostRegisterDate() != null ? post.getPostRegisterDate().toString() : null,
                 showName,
-                post.getMember().getId()  // member_no → member.getId()
+                post.getMember().getId()
         );
     }
 }
