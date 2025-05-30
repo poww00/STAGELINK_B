@@ -2,9 +2,10 @@ package com.pro.controller;
 
 import com.pro.dto.PostRequestDto;
 import com.pro.dto.PostResponseDto;
+import com.pro.security.user.CustomUserDetails;
 import com.pro.service.PostService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,20 +16,12 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
-    private final boolean devMode = false; // true/false
 
     @PostMapping
-    public void createPost(@RequestBody PostRequestDto dto, HttpServletRequest request) {
-        Long memberId;
-        Object memberNoAttr = request.getAttribute("memberNo");
-
-        if (devMode || memberNoAttr == null) {
-            memberId = 1003L; // ✅ 테스트용 memberNo
-        } else {
-            memberId = Long.valueOf((int) memberNoAttr);
-        }
-
-        postService.savePost(dto, memberId);
+    public void createPost(@RequestBody PostRequestDto dto,
+                           @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long member = userDetails.getId();
+        postService.savePost(dto, member);
     }
 
     @GetMapping
@@ -47,30 +40,17 @@ public class PostController {
     }
 
     @PutMapping("/{postNo}")
-    public void updatePost(@PathVariable int postNo, @RequestBody PostRequestDto dto, HttpServletRequest request) {
-        Long memberId;
-        Object memberNoAttr = request.getAttribute("memberNo");
-
-        if (devMode || memberNoAttr == null) {
-            memberId = 1003L;
-        } else {
-            memberId = Long.valueOf((int) memberNoAttr);
-        }
-
-        postService.updatePost(postNo, dto, memberId);
+    public void updatePost(@PathVariable int postNo,
+                           @RequestBody PostRequestDto dto,
+                           @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long member = userDetails.getId();
+        postService.updatePost(postNo, dto, member);
     }
 
     @DeleteMapping("/{postNo}")
-    public void deletePost(@PathVariable int postNo, HttpServletRequest request) {
-        Long memberId;
-        Object memberNoAttr = request.getAttribute("memberNo");
-
-        if (devMode || memberNoAttr == null) {
-            memberId = 1003L;
-        } else {
-            memberId = Long.valueOf((int) memberNoAttr);
-        }
-
-        postService.deletePost(postNo, memberId, devMode); // ✅ devMode 넘겨줌
+    public void deletePost(@PathVariable int postNo,
+                           @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long member = userDetails.getId();
+        postService.deletePost(postNo, member);
     }
 }

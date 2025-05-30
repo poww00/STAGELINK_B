@@ -10,8 +10,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QnaResponseDto {
+
     private Long questionNo;
-    private Long memberNo;
+    private Long member;                // DTO 필드는 member로 유지
     private String questionContents;
     private String answerContents;
     private LocalDateTime createDate;
@@ -19,10 +20,10 @@ public class QnaResponseDto {
 
     public QnaResponseDto(Qna qna) {
         this.questionNo = qna.getQuestionNo();
-        this.memberNo = qna.getMemberNo();
+        this.member = qna.getMemberNo(); // DB 필드명 memberNo → DTO member 로 변환
         this.questionContents = qna.getQuestionContents();
         this.answerContents = qna.getAnswerContents();
         this.createDate = qna.getCreateDate();
-        this.qnaRating = qna.getQnaRating(); // ✅ 기존 필드와 매핑
+        this.qnaRating = qna.getQnaRating();
     }
 }

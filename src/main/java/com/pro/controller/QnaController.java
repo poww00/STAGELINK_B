@@ -3,10 +3,11 @@ package com.pro.controller;
 import com.pro.dto.QnaRatingDto;
 import com.pro.dto.QnaRequestDto;
 import com.pro.dto.QnaResponseDto;
+import com.pro.security.user.CustomUserDetails;
 import com.pro.service.QnaService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +18,6 @@ import java.util.List;
 public class QnaController {
 
     private final QnaService qnaService;
-    private final boolean devMode = false; //  테스트용 모드
 
     @GetMapping
     public ResponseEntity<List<QnaResponseDto>> getQnaList() {
@@ -30,38 +30,26 @@ public class QnaController {
     }
 
     @PostMapping
-    public ResponseEntity<QnaResponseDto> createQna(@RequestBody QnaRequestDto dto, HttpServletRequest request) {
-        Long memberId;
-        Object memberNoAttr = request.getAttribute("memberNo");
-
-        if (devMode || memberNoAttr == null) {
-            memberId = 1003L; // 테스트용
-        } else {
-            memberId = Long.valueOf((int) memberNoAttr);
-        }
-
-        return ResponseEntity.ok(qnaService.createQna(dto, memberId));
+    public ResponseEntity<QnaResponseDto> createQna(@RequestBody QnaRequestDto dto,
+                                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long member = userDetails.getId();
+        return ResponseEntity.ok(qnaService.createQna(dto, member));
     }
 
     @PostMapping("/{id}/rating")
-    public ResponseEntity<QnaResponseDto> updateRating(@PathVariable Long id, @RequestBody QnaRatingDto dto) {
+    public ResponseEntity<QnaResponseDto> updateRating(@PathVariable Long id,
+                                                       @RequestBody QnaRatingDto dto,
+                                                       @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long member = userDetails.getId();
+        dto.setMember(member);
         return ResponseEntity.ok(qnaService.updateRating(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteQna(@PathVariable Long id, HttpServletRequest request) {
-        Long memberId;
-        Object memberNoAttr = request.getAttribute("memberNo");
-
-        if (devMode || memberNoAttr == null) {
-            memberId = 1003L; // 테스트용
-        } else {
-            memberId = Long.valueOf((int) memberNoAttr);
-        }
-
-        qnaService.deleteQna(id, memberId);
+    public ResponseEntity<String> deleteQna(@PathVariable Long id,
+                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long member = userDetails.getId();
+        qnaService.deleteQna(id, member);
         return ResponseEntity.ok("QnA가 삭제되었습니다.");
     }
-
 }
-
