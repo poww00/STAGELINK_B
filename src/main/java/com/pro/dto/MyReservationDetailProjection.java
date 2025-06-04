@@ -1,6 +1,6 @@
 package com.pro.dto;
 
-public interface ReservationDetailProjection {
+public interface MyReservationDetailProjection {
     Long getReservationId(); // 예매번호
     String getReservationDate(); // 예매 일자
     String getShowTitle(); // 공연명

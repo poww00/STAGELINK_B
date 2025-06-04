@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class ReservationDetailDto {
+public class MyReservationDetailDto {
     private Long reservationId;
     private String reservationDate;
     private String showTitle;
@@ -22,5 +22,6 @@ public class ReservationDetailDto {
     private Integer totalAmount;
     private String poster;
 }
+
 
 

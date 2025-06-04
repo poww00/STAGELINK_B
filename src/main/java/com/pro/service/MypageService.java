@@ -23,7 +23,7 @@ public interface MypageService {
     List<MyReservationDto> getMyReservations(Long id);
 
     // 예매 상세 조회
-    ReservationDetailDto getReservationDetail(Long id);
+    MyReservationDetailDto getReservationDetail(Long id);
 
     // 찜 목록 조회
     List<MylikedShowDto> getLikedShows(Long id);

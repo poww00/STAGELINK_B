@@ -114,14 +114,14 @@ public class MypageServiceImpl implements MypageService {
 
     // 예매 상세내역 조회
     @Override
-    public ReservationDetailDto getReservationDetail(Long reservationId) {
-        ReservationDetailProjection projection = myReservationRepository.findReservationDetail(reservationId)
+    public MyReservationDetailDto getReservationDetail(Long reservationId) {
+        MyReservationDetailProjection projection = myReservationRepository.findReservationDetail(reservationId)
                 .orElseThrow(() -> new RuntimeException("예매 상세 없음"));
 
         log.info("🔍 예매 상세: {}", projection.getShowTitle());
 
         // Projection을 DTO로 변환해서 반환
-        return ReservationDetailDto.builder()
+        return MyReservationDetailDto.builder()
                 .reservationId(projection.getReservationId())
                 .reservationDate(projection.getReservationDate())
                 .showTitle(projection.getShowTitle())

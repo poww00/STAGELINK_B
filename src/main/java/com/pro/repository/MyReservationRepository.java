@@ -1,7 +1,7 @@
 package com.pro.repository;
 
 import com.pro.dto.RefundPreviewProjection;
-import com.pro.dto.ReservationDetailProjection;
+import com.pro.dto.MyReservationDetailProjection;
 import com.pro.entity.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -75,7 +75,7 @@ public interface MyReservationRepository extends JpaRepository<Reservation, Long
         JOIN tbl_showseat ss ON r.seat_id = ss.seat_id
         WHERE r.reservation_no = :reservationId
     """, nativeQuery = true)
-    Optional<ReservationDetailProjection> findReservationDetail(@Param("reservationId") Long reservationId);
+    Optional<MyReservationDetailProjection> findReservationDetail(@Param("reservationId") Long reservationId);
 
     // Reservation 엔티티 직접 조회
     @Query("SELECT r FROM Reservation r WHERE r.id = :reservationId")

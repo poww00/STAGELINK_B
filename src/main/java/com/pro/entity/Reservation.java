@@ -47,9 +47,4 @@ public class Reservation {
     @Column(name = "STATUS", nullable = false)
     private ReservationStatus status;
 
-    // 임시 추가(깃 받을 시 수정할 것)
-    // 좌석 등급
-    @Column(name = "SEAT_CLASS", nullable = false)
-    private String seatClass;
-
 }

@@ -81,14 +81,14 @@ public class MypageController {
 
     // 예매 상세 조회
     @GetMapping("/reservations/{reservationId}")
-    public ResponseEntity<ReservationDetailDto> getReservationDetail(
+    public ResponseEntity<MyReservationDetailDto> getReservationDetail(
             @PathVariable Long reservationId,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         // 인증된 사용자 Id
         Long memberId = userDetails.getId();
 
-        ReservationDetailDto dto = mypageService.getReservationDetail(reservationId);
+        MyReservationDetailDto dto = mypageService.getReservationDetail(reservationId);
         return ResponseEntity.ok(dto);
     }
 
