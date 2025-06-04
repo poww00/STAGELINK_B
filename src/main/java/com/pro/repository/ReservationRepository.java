@@ -14,30 +14,54 @@ import java.util.List;
  */
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
-    // 좌석 중복 예약 여부 확인 (예: TEMP 또는 CONFIRMED 상태 포함)
+    /* ---------------- 좌석 중복 체크 ---------------- */
     boolean existsByShow_ShowNoAndSeatClassAndSeatIdAndStatusIn(
             int showNo, String seatClass, Long seatId, List<ReservationStatus> statusList);
 
-    // 전체 인기 공연 (판매량 상위 20개)
-    @Query(value = "SELECT r.show_no, COUNT(*) AS cnt " +
-            "FROM tbl_reservation r " +
-            "GROUP BY r.show_no ORDER BY cnt DESC", nativeQuery = true)
+    /* =================================================
+       종합 TOP 20  (sh.SHOW_INFO = ShowInfo PK)
+       ================================================= */
+    @Query(value = """
+        SELECT sh.SHOW_INFO  AS showInfoId,
+               COUNT(*)      AS cnt
+        FROM   TBL_RESERVATION r
+        JOIN   TBL_SHOW       sh ON r.SHOW_NO = sh.SHOW_NO
+        GROUP  BY sh.SHOW_INFO
+        ORDER  BY cnt DESC
+        LIMIT  20
+    """, nativeQuery = true)
     List<Object[]> findTop20Shows();
 
-    // 성별 기준 인기 공연
-    @Query(value = "SELECT r.show_no, COUNT(*) AS cnt " +
-            "FROM tbl_reservation r " +
-            "JOIN tbl_member m ON r.member = m.member " +
-            "WHERE m.gender = :gender " +
-            "GROUP BY r.show_no ORDER BY cnt DESC", nativeQuery = true)
+    /* =================================================
+       성별 TOP 20
+       ================================================= */
+    @Query(value = """
+        SELECT sh.SHOW_INFO  AS showInfoId,
+               COUNT(*)      AS cnt
+        FROM   TBL_RESERVATION r
+        JOIN   TBL_MEMBER     m  ON r.MEMBER  = m.MEMBER
+        JOIN   TBL_SHOW       sh ON r.SHOW_NO = sh.SHOW_NO
+        WHERE  m.GENDER = :gender
+        GROUP  BY sh.SHOW_INFO
+        ORDER  BY cnt DESC
+        LIMIT  20
+    """, nativeQuery = true)
     List<Object[]> findTop20ShowsByGender(@Param("gender") String gender);
 
-    // 연령대 기준 인기 공연
-    @Query(value = "SELECT r.show_no, COUNT(*) AS cnt " +
-            "FROM tbl_reservation r " +
-            "JOIN tbl_member m ON r.member = m.member " +
-            "WHERE EXTRACT(YEAR FROM m.birthday) BETWEEN :startYear AND :endYear " +
-            "GROUP BY r.show_no ORDER BY cnt DESC", nativeQuery = true)
+    /* =================================================
+       연령대(출생연도 범위) TOP 20
+       ================================================= */
+    @Query(value = """
+        SELECT sh.SHOW_INFO  AS showInfoId,
+               COUNT(*)      AS cnt
+        FROM   TBL_RESERVATION r
+        JOIN   TBL_MEMBER     m  ON r.MEMBER  = m.MEMBER
+        JOIN   TBL_SHOW       sh ON r.SHOW_NO = sh.SHOW_NO
+        WHERE  EXTRACT(YEAR FROM m.BIRTHDAY) BETWEEN :startYear AND :endYear
+        GROUP  BY sh.SHOW_INFO
+        ORDER  BY cnt DESC
+        LIMIT  20
+    """, nativeQuery = true)
     List<Object[]> findTop20ShowsByAgeRange(@Param("startYear") int startYear,
-                                            @Param("endYear") int endYear);
+                                            @Param("endYear")   int endYear);
 }

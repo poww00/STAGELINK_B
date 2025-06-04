@@ -4,11 +4,14 @@ import com.pro.entity.ShowInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface ShowInfoRepository extends JpaRepository<ShowInfo, Integer> {
 
     // 종료되지 않은 공연만 조회 (정렬, 페이징 포함)
-    Page<ShowInfo> findByShowsShowStateNot(int showState, Pageable pageable);
+    @Query("SELECT DISTINCT si FROM ShowInfo si JOIN si.shows s WHERE s.showState <> :showState")
+    Page<ShowInfo> findDistinctByShowStateNot(@Param("showState") int showState, Pageable pageable);
 
     // 공연 제목 검색 (대소문자 무시)
     Page<ShowInfo> findByNameContainingIgnoreCase(String keyword, Pageable pageable);
