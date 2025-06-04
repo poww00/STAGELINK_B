@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/mypage").authenticated() // 인증 필요한 경로만 지정
+                        .requestMatchers("/api/mypage/**").authenticated() // 인증 필요한 경로만 지정
                         .anyRequest().permitAll() // 그 외 모든 요청 허용
                 );
 

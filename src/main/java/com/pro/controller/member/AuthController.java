@@ -32,16 +32,30 @@ public class AuthController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto) {
-        Member member = memberService.login(dto.getUserId(), dto.getPassword());
-        JwtTokenDto token = jwtTokenProvider.generateToken(member);
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto dto) {
+        try {
+            Member member = memberService.login(dto.getUserId(), dto.getPassword());
+            JwtTokenDto token = jwtTokenProvider.generateToken(member);
 
-        return ResponseEntity.ok(LoginResponseDto.builder()
-                .accessToken(token.getAccessToken())
-                .refreshToken(token.getRefreshToken())
-                .nickname(member.getNickname())
-                .email(member.getUserEmail())
-                .build());
+            return ResponseEntity.ok(LoginResponseDto.builder()
+                    .accessToken(token.getAccessToken())
+                    .refreshToken(token.getRefreshToken())
+                    .nickname(member.getNickname())
+                    .email(member.getUserEmail())
+                    .build());
+
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(404).body("존재하지 않는 사용자입니다.");
+        } catch (IllegalStateException e) {
+            // 여기서 탈퇴회원은 403으로 처리
+            return ResponseEntity.status(403).body("탈퇴한 회원입니다.");
+        } catch (IllegalArgumentException e) {
+            // 여기만 비밀번호 오류로 제한
+            return ResponseEntity.status(401).body("비밀번호가 일치하지 않습니다.");
+        } catch (Exception e) {
+            log.error("로그인 중 알 수 없는 오류 발생", e);
+            return ResponseEntity.status(500).body("로그인 처리 중 오류가 발생했습니다.");
+        }
     }
 
 

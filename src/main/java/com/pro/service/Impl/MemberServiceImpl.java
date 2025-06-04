@@ -5,12 +5,15 @@ import com.pro.dto.ResetPasswordDto;
 import com.pro.entity.Gender;
 import com.pro.entity.Member;
 import com.pro.entity.MemberState;
+import com.pro.entity.SignupType;
 import com.pro.repository.MemberRepository;
+import com.pro.repository.MyReservationRepository;
 import com.pro.security.JwtTokenProvider;
 import com.pro.security.jwt.JwtTokenDto;
 import com.pro.service.MemberService;
 import com.pro.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
+import lombok.Singular;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -36,6 +39,7 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
+    private final MyReservationRepository myReservationRepository;
 
     @Value("${kakao.client-id}")
     private String kakaoClientId;
@@ -69,6 +73,8 @@ public class MemberServiceImpl implements MemberService {
                 .nickname(dto.getNickname())
                 .userEmail(dto.getUserEmail())
                 .memberStatus(MemberState.ACTIVE) // 회원가입시 기본값(활동)
+                .joinedDate(LocalDate.now()) // 가입 날짜
+                .signupType(SignupType.GENERAL) // 일반 회원가입자
                 .build();
         memberRepository.save(member);
     }
@@ -86,6 +92,13 @@ public class MemberServiceImpl implements MemberService {
         // 유저 조회
         Member member = memberRepository.findByUserId(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 유저 없음: " + userId));
+
+        // 탈퇴 회원 로그인 차단
+        if (member.getMemberStatus() == MemberState.DELETED) {
+            log.warn("탈퇴한 회원 로그인 시도");
+            throw new IllegalStateException("탈퇴한 회원입니다.");
+        }
+
         // 비밀번호 검증
         if (!passwordEncoder.matches(password, member.getPassword())) {
             throw new IllegalArgumentException("비밀번호 불일치");
@@ -131,6 +144,22 @@ public class MemberServiceImpl implements MemberService {
         member.setPassword(passwordEncoder.encode(dto.getNewPassword()));
         memberRepository.save(member);
     }
+
+    // 회원 탈퇴 - 예약건 확인
+    @Override
+    public boolean hasReservation(Long userId) {
+        return myReservationRepository.existsByMember_Id(userId);
+    }
+    // 회원 탈퇴 - 정보 삭제
+    @Override
+    public void withdrawMember(Long userId) {
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+
+        member.setMemberStatus(MemberState.DELETED);
+        memberRepository.save(member);
+    }
+
 
 
     // 카카오 로그인
@@ -285,6 +314,8 @@ public class MemberServiceImpl implements MemberService {
                 .birthday(birthday)
                 .gender(gender)
                 .memberStatus(MemberState.ACTIVE)
+                .joinedDate(LocalDate.now())
+                .signupType(SignupType.KAKAO)
                 .build();
 
         return memberRepository.save(newMember);

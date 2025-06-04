@@ -47,6 +47,7 @@ public class JwtTokenProvider {
                 .setSubject(member.getUserId()) // sub: 로그인용 아이디
                 .claim("id", member.getId()) // id: DB PK
                 .claim("nickname", member.getNickname()) // 사용자 닉네임
+                .claim("signupType", member.getSignupType().name()) // 카카오회원 일반회원 구분
                 .setIssuedAt(now)
                 .setExpiration(accessTokenExpires) // 만료시간 설정
                 .signWith(key, SignatureAlgorithm.HS256) //서명 HS256 알고리즘
