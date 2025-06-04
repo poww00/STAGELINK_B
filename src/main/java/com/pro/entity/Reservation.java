@@ -42,7 +42,9 @@ public class Reservation {
     private LocalDateTime reservationDate;
 
     //좌석 상태
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS", nullable = false)
     private ReservationStatus status;
+
 }

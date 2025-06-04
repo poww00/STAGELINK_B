@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Optional;
 
 @ResponseBody
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface  MemberRepository extends JpaRepository<Member, Long> {
 
     //아이디, 이메일 중복 확인
     boolean existsByUserId(String userId);

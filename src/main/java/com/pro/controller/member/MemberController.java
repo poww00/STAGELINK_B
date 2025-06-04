@@ -1,21 +1,17 @@
 package com.pro.controller.member;
 
 import com.pro.dto.FindIdRequestDto;
-import com.pro.dto.MemberInfoDto;
 import com.pro.dto.MemberRegisterDto;
 import com.pro.dto.ResetPasswordDto;
 import com.pro.repository.MemberRepository;
-import com.pro.security.user.CustomUserDetails;
 import com.pro.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -72,22 +68,5 @@ public class MemberController {
     @AllArgsConstructor
     static class CheckResponse {
         private boolean available;
-    }
-
-    // 마이페이지
-    @GetMapping("/mypage")
-    public ResponseEntity<?> myPage(@AuthenticationPrincipal CustomUserDetails user) {
-        String nickname = user.getNickname();
-        return ResponseEntity.ok(Map.of("nickname", nickname));
-    }
-
-    @GetMapping("/mypage/info")
-    public ResponseEntity<MemberInfoDto> getUserInfo(@AuthenticationPrincipal CustomUserDetails user) {
-        return ResponseEntity.ok(
-                MemberInfoDto.builder()
-                        .nickname(user.getNickname())
-                        //.email(user.getUserEmail())
-                        .build()
-        );
     }
 }

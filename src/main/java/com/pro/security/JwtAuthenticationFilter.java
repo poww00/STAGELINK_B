@@ -1,6 +1,7 @@
 package com.pro.security;
 
 import com.pro.security.user.CustomUserDetails;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,11 +35,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             if (token != null && jwtTokenProvider.validateToken(token)) {
                 Authentication authentication = jwtTokenProvider.getAuthentication(token);
+
+                //CustomUserDetail 추출
+                CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+                // 탈퇴 회원인지 검사
+                if (userDetails.getMember().getMemberStatus().name().equals("DELETED")) {
+                    log.warn("탈퇴한 회원의 접근 차단:{}", userDetails.getUsername());
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "탈퇴한 회원입니다.");
+                    return;
+                }
+
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 log.info("인증 완료: {}", authentication.getName());
 
-                // !!!! SecurityContext에 저장된 인증 정보에서 사용자 ID 꺼내기
-                CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+                /// 회원 pk를 request attribute로 저장
                 request.setAttribute("memberNo", userDetails.getId());
             }
         } catch (Exception e) {

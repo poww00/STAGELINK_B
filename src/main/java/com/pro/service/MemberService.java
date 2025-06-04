@@ -28,6 +28,10 @@ public interface MemberService {
     void verifyUserByIdAndEmail(String userId, String userEmail);
     void resetPassword(ResetPasswordDto dto);
 
+    // 회원 탈퇴
+    boolean hasReservation(Long userId);
+    void withdrawMember(Long userId);
+
     // 소셜 로그인
     Map<String, Object> getKakaoMember(String accessToken);
     Map<String, Object> getNaverMember(String accessToken, String state);

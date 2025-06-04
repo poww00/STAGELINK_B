@@ -8,8 +8,6 @@ import lombok.*;
 import java.time.LocalDate;
 
 
-
-
 @Entity
 @Getter
 @Setter
@@ -53,4 +51,12 @@ public class Member {
     @Enumerated(EnumType.STRING)
     @Column(name = "MEMBER_STATE", nullable = false)
     private MemberState memberStatus;
+
+    @Column(name = "JOINED_DATE", nullable = false) // 가입일자
+    private LocalDate joinedDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "SIGNUP_TYPE", nullable = false) // 회원가입 유형
+    private SignupType signupType;
+
 }

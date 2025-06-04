@@ -27,6 +27,10 @@ public class CustomUserDetails implements UserDetails {
         return member.getNickname();
     }
 
+    public Member getMember() {
+        return this.member;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(() -> "ROLE_USER"); // 사용자 권한 하나로 고정
