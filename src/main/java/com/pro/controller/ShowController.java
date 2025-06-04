@@ -28,7 +28,7 @@ public class ShowController {
         return ResponseEntity.ok(showService.getShow(id));
     }
 
-    // 상태값 기반 공연 제목 + 페이지네이션
+    // 특정 상태의 공연 조회 (페이지네이션)
     @GetMapping("/show/titles")
     public ResponseEntity<Page<ShowDTO>> getShowsByStates(
             @RequestParam List<Integer> states,
@@ -36,5 +36,11 @@ public class ShowController {
             @RequestParam(defaultValue = "20") int size) {
 
         return ResponseEntity.ok(showService.getShowsByStates(states, page, size));
+    }
+
+    // 공연의 모든 회차(ShowInfo 기준) 조회
+    @GetMapping("/shows/byShowInfo/{showInfoId}")
+    public ResponseEntity<List<ShowDTO>> getShowsByShowInfo(@PathVariable Integer showInfoId) {
+        return ResponseEntity.ok(showService.getShowsByShowInfo(showInfoId));
     }
 }

@@ -15,13 +15,13 @@ public class ShowLikes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "LIKE_NO")
-    private Integer likeNo;
+    private Integer likeNo; // 찜 고유 번호 (PK)
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SHOW_NO", nullable = false)
-    private Show show;
+    private Show show; // 찜한 공연 (FK → TBL_SHOWINFO)
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER", nullable = false)
-    private Member member;
+    private Member member; // 찜한 사용자 (FK → TBL_MEMBER)
 }

@@ -1,16 +1,14 @@
 package com.pro.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "TBL_RESERVATION")
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,6 +33,9 @@ public class Reservation {
     // 좌석 ID
     @Column(name = "SEAT_ID", nullable = false)
     private Long seatId;
+
+    @Column(name = "SEAT_CLASS", nullable = false)
+    private String seatClass;
 
     // 예매 날짜
     @Column(name = "RESERVATION_DATE", nullable = false)

@@ -14,13 +14,13 @@ public class ShowSeat {
 
     @Id
     @Column(name = "SEAT_ID")
-    private Long seatId;
+    private Long seatId; //좌석 고유 번호
 
     @Column(name = "SEAT_CLASS")
     private String seatClass; // 등급 (R, S, A, VIP)
 
     @Column(name = "SEAT_NUMBER")
-    private int seatNumber;
+    private int seatNumber; //좌석 번호
 
     @Column(name = "SEAT_RESERVED")
     private int seatReserved; // 0: 미예약, 1: 예약됨
