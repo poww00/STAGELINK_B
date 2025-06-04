@@ -12,27 +12,29 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// 공연 관련 비즈니스 로직을 처리하는 서비스 구현 클래스
+/**
+ * ShowServiceImpl
+ * 공연 회차(Show) 관련 서비스 구현체
+ * 개별 회차 조회, 전체 조회, 상태 필터링, 공연 정보별 회차 조회 기능 제공
+ */
 @Service
 public class ShowServiceImpl implements ShowService {
 
     private final ShowRepository showRepository;
 
-    // 생성자 기반 의존성 주입
     public ShowServiceImpl(ShowRepository showRepository) {
         this.showRepository = showRepository;
     }
 
-    // 공연 ID로 공연 상세 정보 조회
+    //공연 회차 ID로 단일 회차 정보 조회
     @Override
     public ShowDTO getShow(Integer showNo) {
-        Show show = showRepository.findById(showNo)
+        Show show = showRepository.findById(showNo.longValue())
                 .orElseThrow(() -> new IllegalArgumentException("해당 공연이 존재하지 않습니다. ID: " + showNo));
         return ShowDTO.fromEntity(show);
     }
 
-
-    // 전체 공연 목록 조회
+    // 전체 공연 회차 목록 조회
     @Override
     public List<ShowDTO> getAllShows() {
         return showRepository.findAll()
@@ -41,7 +43,7 @@ public class ShowServiceImpl implements ShowService {
                 .collect(Collectors.toList());
     }
 
-    // 특정 상태인 공연 조회
+    //상태값(예: 0:예약가능, 1:예정 등) 기준 공연 회차 목록 조회 (페이지네이션 적용)
     @Override
     public Page<ShowDTO> getShowsByStates(List<Integer> states, int page, int size) {
         List<ShowDTO> filteredList = showRepository.findAll()
@@ -55,5 +57,15 @@ public class ShowServiceImpl implements ShowService {
 
         List<ShowDTO> pagedList = filteredList.subList(start, end);
         return new PageImpl<>(pagedList, PageRequest.of(page, size), filteredList.size());
+    }
+
+    //특정 공연 정보 ID 기준으로 예매 가능/예정인 회차 조회
+    @Override
+    public List<ShowDTO> getShowsByShowInfo(Integer showInfoId) {
+        List<Show> shows = showRepository.findByShowInfo_Id(showInfoId.longValue());
+        return shows.stream()
+                .filter(show -> show.getShowState() == 0 || show.getShowState() == 1)
+                .map(ShowDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 }

@@ -1,35 +1,38 @@
 package com.pro.controller;
 
 import com.pro.dto.ActorDTO;
+import com.pro.dto.ActorShowDTO;
 import com.pro.service.ActorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 배우 관련 API 컨트롤러
- * - 배우 상세 정보 조회 엔드포인트 제공
+ * - 배우 상세 정보 및 출연작 조회 기능 제공
  */
 @RestController
-@RequestMapping("/api/actors") // 공통 URL prefix
-@RequiredArgsConstructor // 생성자 주입 자동 생성
+@RequestMapping("/api/actors")
+@RequiredArgsConstructor
 public class ActorController {
 
     private final ActorService actorService;
 
-    /**
-     * [GET] /api/actors/{actorNo}
-     * 특정 배우의 상세 정보를 조회 (출연작 포함)
-     *
-     * @param actorNo 조회할 배우의 고유 번호
-     * @return 배우 기본 정보 + 출연작 목록을 담은 DTO
-     */
+    // [1] 배우 상세 정보 조회 (기본 정보 + 출연작 포함)
+    // 예: GET /api/actors/3
     @GetMapping("/{actorNo}")
     public ResponseEntity<ActorDTO> getActorDetail(@PathVariable Integer actorNo) {
         ActorDTO actorDTO = actorService.getActorDetail(actorNo);
-        return ResponseEntity.ok(actorDTO); // 200 OK + JSON 응답
+        return ResponseEntity.ok(actorDTO);
+    }
+
+    // [2] 배우 출연작 목록만 별도로 조회
+    // 예: GET /api/actors/3/works
+    @GetMapping("/{actorNo}/works")
+    public ResponseEntity<List<ActorShowDTO>> getActorWorks(@PathVariable Integer actorNo) {
+        List<ActorShowDTO> works = actorService.getActorWorks(actorNo);
+        return ResponseEntity.ok(works);
     }
 }

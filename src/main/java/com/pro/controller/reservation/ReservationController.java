@@ -1,87 +1,119 @@
 package com.pro.controller.reservation;
 
 import com.pro.dto.ReservationDTO;
+import com.pro.dto.ReservationDetailDTO;
 import com.pro.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/reservation")
 @RequiredArgsConstructor
 public class ReservationController {
 
     private final ReservationService reservationService;
 
-    // [아임포트용] 결제 검증 및 예매 처리
-    @PostMapping("/payment/verify")
-    public ResponseEntity<?> verifyAndReserve(@RequestBody ReservationDTO dto) {
-        try {
-            String accessToken = getIamportAccessToken();
-            Map<String, Object> paymentInfo = verifyIamportPayment(dto.getImpUid(), accessToken);
-
-            // 결제 상태 및 금액 검증
-            if (paymentInfo == null || !"paid".equals(paymentInfo.get("status"))) {
-                return ResponseEntity.badRequest().body("결제 내역이 유효하지 않거나, 결제상태가 완료되지 않았습니다.");
-            }
-            int paidAmount = ((Number) paymentInfo.get("amount")).intValue();
-            if (paidAmount != dto.getTotalAmount()) {
-                return ResponseEntity.badRequest().body("결제 금액이 일치하지 않습니다.");
-            }
-
-            // 예매(좌석 예약, Reservation 저장 등)
-            reservationService.createReservation(dto);
-
-            return ResponseEntity.ok("예매 및 결제 정보 저장이 완료되었습니다!");
-        } catch (HttpClientErrorException.NotFound e) {
-            return ResponseEntity.badRequest().body("존재하지 않는 결제 정보입니다. 결제 실패!");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("결제 검증 또는 예매에 실패했습니다: " + e.getMessage());
-        }
+    // [1] 임시 예약 생성
+    @PostMapping("/temp")
+    public ResponseEntity<?> createTempReservation(@RequestBody ReservationDTO dto) {
+        List<Long> resNos = reservationService.createTempReservation(dto);
+        return ResponseEntity.ok(Map.of("reservationNoList", resNos));
     }
 
-    // 아임포트 인증
-    private String getIamportAccessToken() {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+    // [2] 결제 확정 및 검증
+    @PostMapping("/confirm")
+    public ResponseEntity<?> confirmReservation(@RequestBody ReservationDTO dto) {
+        String token = getIamportAccessToken();
+        Map<String, Object> pay = verifyIamportPayment(dto.getImpUid(), token);
 
+        if (pay == null || !"paid".equals(pay.get("status"))) {
+            return ResponseEntity.badRequest().body("결제 상태가 유효하지 않습니다.");
+        }
+
+        int paid = ((Number) pay.get("amount")).intValue();
+        if (paid != dto.getTotalAmount()) {
+            return ResponseEntity.badRequest().body("결제 금액 불일치");
+        }
+
+        List<Long> list = dto.getReservationNoList();
+        if ((list == null || list.isEmpty()) && dto.getReservationNo() != null) {
+            list = List.of(dto.getReservationNo());
+        }
+        if (list == null || list.isEmpty()) {
+            return ResponseEntity.badRequest().body("reservationNoList 가 없습니다.");
+        }
+
+        reservationService.confirmReservation(list);
+        return ResponseEntity.ok("결제 및 예매가 확정되었습니다!");
+    }
+
+    // [3] 예약 취소
+    @PostMapping("/cancel")
+    public ResponseEntity<?> cancelReservation(@RequestBody ReservationDTO dto) {
+        List<Long> list = dto.getReservationNoList();
+        if ((list == null || list.isEmpty()) && dto.getReservationNo() != null) {
+            list = List.of(dto.getReservationNo());
+        }
+        if (list == null || list.isEmpty()) {
+            return ResponseEntity.badRequest().body("reservationNoList 가 없습니다.");
+        }
+
+        reservationService.cancelReservation(list);
+        return ResponseEntity.ok("예약이 취소되었습니다.");
+    }
+
+    // [4] 예약 상세 조회 (단건)
+    @GetMapping("/{reservationNo}")
+    public ResponseEntity<ReservationDetailDTO> getDetail(@PathVariable Long reservationNo) {
+        return ResponseEntity.ok(reservationService.getReservationDetail(reservationNo));
+    }
+
+    // [5] 포트원 AccessToken 발급
+    private String getIamportAccessToken() {
+        RestTemplate rest = new RestTemplate();
         JSONObject body = new JSONObject();
         body.put("imp_key", "1620104317130120");
         body.put("imp_secret", "9smVIL5yGSLbHi59L6WhBUVbxjRPhYUL2W2Qs8A9Rs4djglEdBAJYvh7v1EYcXH04m4dqAgF9W3nYHYu");
 
-        HttpEntity<String> entity = new HttpEntity<>(body.toString(), headers);
-        ResponseEntity<Map> response = restTemplate.postForEntity(
-                "https://api.iamport.kr/users/getToken", entity, Map.class
-        );
-        Map<String, Object> resp = (Map<String, Object>) response.getBody().get("response");
-        return (String) resp.get("access_token");
+        ResponseEntity<Map> resp = rest.postForEntity(
+                "https://api.iamport.kr/users/getToken",
+                new HttpEntity<>(body.toString(), jsonHeader()), Map.class);
+
+        return (String) ((Map<?, ?>) resp.getBody().get("response")).get("access_token");
     }
 
-    // 결제내역 검증
-    private Map<String, Object> verifyIamportPayment(String impUid, String accessToken) {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", accessToken);
-
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+    // [6] 포트원 결제 검증
+    private Map<String, Object> verifyIamportPayment(String impUid, String token) {
+        RestTemplate rest = new RestTemplate();
+        HttpEntity<?> req = new HttpEntity<>(authHeader(token));
         try {
-            ResponseEntity<Map> response = restTemplate.exchange(
+            ResponseEntity<Map> resp = rest.exchange(
                     "https://api.iamport.kr/payments/" + impUid,
-                    HttpMethod.GET, entity, Map.class
-            );
-            return (Map<String, Object>) response.getBody().get("response");
+                    HttpMethod.GET, req, Map.class);
+            return (Map<String, Object>) resp.getBody().get("response");
         } catch (HttpClientErrorException.NotFound e) {
-            throw e; // Controller에서 처리
+            throw e;
         }
+    }
+
+    // [7] JSON 헤더 생성
+    private HttpHeaders jsonHeader() {
+        HttpHeaders h = new HttpHeaders();
+        h.setContentType(MediaType.APPLICATION_JSON);
+        return h;
+    }
+
+    // [8] 인증 헤더 생성
+    private HttpHeaders authHeader(String token) {
+        HttpHeaders h = new HttpHeaders();
+        h.set("Authorization", token);
+        return h;
     }
 }
