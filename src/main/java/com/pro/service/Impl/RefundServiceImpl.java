@@ -28,35 +28,37 @@ public class RefundServiceImpl implements RefundService {
     @Override
     @Transactional
     public RefundResponseDto processRefund(Long reservationId, Long userId) {
-
-        // 예매 정보 조회
+        // [1] 예매 정보 조회
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 예매 내역이 존재하지 않습니다."));
 
-        // 로그인한 유저가 해당 예매의 주인인지 검증
+        // [2] 유저 검증
         if (!reservation.getMember().getId().equals(userId)) {
             throw new IllegalArgumentException("해당 예매에 대한 환불 권한이 없습니다.");
         }
 
-        // 이미 취소된 예매인지 확인
+        // [3] 예매 상태 확인
         if (reservation.getStatus() == ReservationStatus.CANCELED) {
             throw new IllegalArgumentException("이미 취소된 예매입니다.");
         }
 
-        // 총 결제 금액 계산
+        // [4] 결제 금액 및 환불 금액 계산
         int totalAmount = calculateAmountBySeatClass(reservation.getSeatClass(), reservation.getShow());
-        // 환불 수수료 계산 & 환불 금액 계산
+
         RefundCalculator.RefundResult result = RefundCalculator.calculate(
                 reservation.getReservationDate(),
                 reservation.getShow().getShowStartTime(),
                 totalAmount
         );
 
-        // 좌석 정보 조회
-        ShowSeat seat = seatRepository.findById(reservation.getSeatId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 좌석 정보를 찾을 수 없습니다."));
+        // [5] 좌석 정보 조회
+        ShowSeat seat = seatRepository.findSeat(
+                reservation.getShow().getShowNo().intValue(),
+                reservation.getSeatClass(),
+                reservation.getSeatId().intValue()
+        ).orElseThrow(() -> new IllegalArgumentException("좌석 정보를 찾을 수 없습니다."));
 
-        // 환불 엔티티 생성 및 저장
+        // [6] 환불 엔티티 생성 및 저장
         Refund refund = Refund.builder()
                 .member(reservation.getMember())
                 .reservation(reservation)
@@ -66,11 +68,12 @@ public class RefundServiceImpl implements RefundService {
                 .build();
         refundRepository.save(refund);
 
-        // 예매 상태 변경: 취소 처리
+        // [7] 예매 상태 변경 + 좌석 예약 상태 복구
         reservation.setStatus(ReservationStatus.CANCELED);
-        // 좌석 예약 상태 복구 (1 -> 0)
         seat.setSeatReserved(0);
+        seatRepository.save(seat);
 
+        // [8] 결과 DTO 반환
         return new RefundResponseDto(
                 refund.getRefundNo(),
                 refund.getMember().getId(),
@@ -82,6 +85,7 @@ public class RefundServiceImpl implements RefundService {
                 result.getFee()
         );
     }
+
 
 
 
@@ -115,7 +119,7 @@ public class RefundServiceImpl implements RefundService {
         return RefundPreviewDto.builder()
                 .reservationNo(projection.getReservationNo())
                 .showTitle(projection.getShowTitle())
-                .poster(projection.getPosterUrl())
+                .poster(projection.getPoster())
                 .venue(projection.getVenue())
                 .showStartTime(projection.getShowStartTime())
                 .reservationDate(projection.getReservationDate())

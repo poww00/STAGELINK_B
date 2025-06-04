@@ -72,7 +72,10 @@ public interface MyReservationRepository extends JpaRepository<Reservation, Long
         JOIN tbl_showinfo si ON s.show_info = si.show_info
         JOIN tbl_showlocation l ON si.show_location = l.showlocation_id
         JOIN tbl_member m ON r.member = m.member
-        JOIN tbl_showseat ss ON r.seat_id = ss.seat_id
+        JOIN tbl_showseat ss\s
+          ON ss.seat_number = r.seat_id
+         AND ss.seat_class = r.seat_class
+         AND ss.show_no = r.show_no
         WHERE r.reservation_no = :reservationId
     """, nativeQuery = true)
     Optional<MyReservationDetailProjection> findReservationDetail(@Param("reservationId") Long reservationId);
@@ -105,8 +108,11 @@ public interface MyReservationRepository extends JpaRepository<Reservation, Long
     FROM tbl_reservation r
     JOIN tbl_show s ON r.show_no = s.show_no
     JOIN tbl_showinfo si ON s.show_info = si.show_info
-    JOIN tbl_showseat ss ON r.seat_id = ss.seat_id
     JOIN tbl_showlocation l ON si.show_location = l.showlocation_id
+    JOIN tbl_showseat ss 
+      ON ss.seat_number = r.seat_id
+     AND ss.seat_class = r.seat_class
+     AND ss.show_no = r.show_no
     WHERE r.reservation_no = :reservationId
     """, nativeQuery = true)
     RefundPreviewProjection findRefundPreviewByReservationId(@Param("reservationId") Long reservationId);

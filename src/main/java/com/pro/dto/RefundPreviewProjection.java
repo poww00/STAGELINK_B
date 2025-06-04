@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 public interface RefundPreviewProjection {
     Long getReservationNo();
     String getShowTitle();
-    String getPosterUrl();
+    String getPoster();
     String getVenue();
     LocalDateTime getShowStartTime();
     LocalDateTime getReservationDate();
