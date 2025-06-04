@@ -7,9 +7,7 @@ import lombok.Setter;
 @Setter
 public class CommentRequestDto {
 
-    private Long postNo;             // POST_NO (게시글 번호)
-    private Long member;             // MEMBER (회원 번호)
-    private String nickname;         // NICKNAME (닉네임)
-    private String commentContent;   // COMMENT_CONTENT (댓글 내용)
-    private Integer commentRating;   // COMMENT_RATING (평점)
+    private Long postNo;               // 게시글 번호
+    private String commentContent;     // 댓글 내용
+    private Integer commentRating;     // 평점 (nullable)
 }

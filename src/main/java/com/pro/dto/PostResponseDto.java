@@ -27,7 +27,7 @@ public class PostResponseDto {
         this.nickname = nickname;
         this.postRegisterDate = postRegisterDate;
         this.showName = showName;
-        this.member = member; //
+        this.member = member;
     }
 }
 
