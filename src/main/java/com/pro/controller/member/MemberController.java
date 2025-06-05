@@ -57,7 +57,7 @@ public class MemberController {
     }
 
     // 비밀번호 재설정
-    @PostMapping("/reset-password")
+    @PostMapping("member/reset-password")
     public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordDto dto) {
         memberService.resetPassword(dto);
         return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
