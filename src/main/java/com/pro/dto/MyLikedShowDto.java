@@ -7,14 +7,13 @@ import lombok.Setter;
 @Setter
 public class MyLikedShowDto {
 
-    private Long showNo;         // 공연 ID
-    private String showName;     // 공연 제목
-    private String poster;       // 공연 포스터 이미지
-    private String period;       // 공연 기간
-    private boolean available;   // 예매 가능 여부
+    private Integer showNo;
+    private String showName;
+    private String poster;
+    private String period;
+    private boolean available;
 
-    // 명시적 생성자
-    public MyLikedShowDto(Long showNo, String showName, String poster, String period, boolean available) {
+    public MyLikedShowDto(Integer showNo, String showName, String poster, String period, boolean available) {
         this.showNo = showNo;
         this.showName = showName;
         this.poster = poster;
@@ -22,6 +21,5 @@ public class MyLikedShowDto {
         this.available = available;
     }
 
-    // 기본 생성자 (JPA 또는 Jackson 등에서 필요할 수 있음)
     public MyLikedShowDto() {}
 }

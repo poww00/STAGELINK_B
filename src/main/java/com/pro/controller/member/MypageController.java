@@ -94,7 +94,7 @@ public class MypageController {
 
     // 찜 목록 조회
     @GetMapping("/likes")
-    public List<MyLikedShowProjection> getLikedShows(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public List<MyLikedShowDto> getLikedShows(@AuthenticationPrincipal CustomUserDetails userDetails) {
         Long memberId = userDetails.getMember().getId();
         return mypageService.getMyLikedShows(memberId);
     }

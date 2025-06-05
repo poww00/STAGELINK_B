@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -141,8 +142,18 @@ public class MypageServiceImpl implements MypageService {
 
     // 찜 목록 조회
     @Override
-    public List<MyLikedShowProjection> getMyLikedShows(Long memberId) {
-        return myLikedShowRepository.findMyLikedShows(memberId);
+    public List<MyLikedShowDto> getMyLikedShows(Long memberId) {
+        List<Object[]> results = myLikedShowRepository.findMyLikedShows(memberId);
+
+        return results.stream()
+                .map(result -> new MyLikedShowDto(
+                        (Integer) result[0],
+                        (String) result[1],
+                        (String) result[2],
+                        (String) result[3],
+                        Boolean.parseBoolean((String) result[4])
+                ))
+                .collect(Collectors.toList());
     }
 
     // 찜 취소

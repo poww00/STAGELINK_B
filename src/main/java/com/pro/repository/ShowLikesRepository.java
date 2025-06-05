@@ -15,10 +15,8 @@ import java.util.Optional;
  */
 public interface ShowLikesRepository extends JpaRepository<ShowLikes, Integer> {
 
-
      //특정 공연과 회원의 찜 정보 조회
     Optional<ShowLikes> findByShowAndMember(Show show, Member member);
-
 
      //특정 공연과 회원의 찜 정보 삭제
     void deleteByShowAndMember(Show show, Member member);
@@ -28,4 +26,5 @@ public interface ShowLikesRepository extends JpaRepository<ShowLikes, Integer> {
 
     // 특정 사용자가 찜한 모든 공연 목록 조회
     List<ShowLikes> findAllByMember(Member member);
+
 }
