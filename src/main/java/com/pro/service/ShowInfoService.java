@@ -13,25 +13,25 @@ import java.util.List;
  */
 public interface ShowInfoService {
 
-    // 모든 공연 정보 목록 조회
+    /** 모든 공연 정보 조회 */
     List<ShowInfoDTO> getAllShowInfos();
 
-    //공연 ID로 상세 정보 조회
+    /** 공연 ID로 상세 정보 조회 */
     ShowInfoDTO getShowInfo(Integer id);
 
-    //공연 정렬 목록 조회
+    /** 공연 정렬 목록 조회 (이름, 날짜, 카테고리 등) */
     Page<ShowInfoDTO> getSortedShowInfoList(String sortBy, String direction,
                                             int page, int size, boolean excludeEnded);
 
-    // 키워드 기반 공연명 검색
+    /** 공연명 키워드 검색 (회차 존재 공연만) */
     Page<ShowInfoDTO> searchShowInfos(String keyword, int page, int size);
 
-    // 카테고리별 공연 필터링
+    /** 카테고리별 공연 필터링 */
     Page<ShowInfoDTO> filterByCategory(String category, int page, int size);
 
-    // 특정 공연의 출연 배우 목록 조회 (TabContent용)
+    /** 출연 배우 목록 조회 */
     List<CastDTO> getCasts(Integer showInfoId);
 
-    // 특정 공연의 후기 미리보기 목록 조회 (TabContent용)
+    /** 후기 미리보기 조회 */
     List<ReviewPreviewDTO> getReviews(Integer showInfoId, int size);
 }
