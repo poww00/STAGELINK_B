@@ -2,16 +2,16 @@ package com.pro.service.Impl;
 
 import com.pro.dto.*;
 import com.pro.entity.*;
-import com.pro.repository.MemberRepository;
-import com.pro.repository.MyReservationRepository;
-import com.pro.repository.ShowLikesRepository;
+import com.pro.repository.*;
 import com.pro.service.MypageService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -24,6 +24,8 @@ public class MypageServiceImpl implements MypageService {
     private final PasswordEncoder passwordEncoder;
     private final MyReservationRepository myReservationRepository;
     private final ShowLikesRepository showLikesRepository;
+    private final ShowRepository showRepository;
+    private final MyLikedShowRepository myLikedShowRepository;
 
     // 사용자 정보 조회
     @Override
@@ -118,7 +120,7 @@ public class MypageServiceImpl implements MypageService {
         MyReservationDetailProjection projection = myReservationRepository.findReservationDetail(reservationId)
                 .orElseThrow(() -> new RuntimeException("예매 상세 없음"));
 
-        log.info("🔍 예매 상세: {}", projection.getShowTitle());
+        log.info("예매 상세: {}", projection.getShowTitle());
 
         // Projection을 DTO로 변환해서 반환
         return MyReservationDetailDto.builder()
@@ -139,30 +141,25 @@ public class MypageServiceImpl implements MypageService {
 
     // 찜 목록 조회
     @Override
-    public List<MylikedShowDto> getLikedShows(Long id) {
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
-
-        List<ShowLikes> likes = showLikesRepository.findAllByMember(member);
-
-        return likes.stream().map(like -> {
-            Show show = like.getShow();
-            ShowInfo info = show.getShowInfo();
-
-            String showName = info.getName();
-            String poster = info.getPoster();
-            String period = show.getShowStartTime().toLocalDate() + " ~ " + show.getShowEndTime().toLocalDate();
-            boolean available = show.getShowState() == 1;
-
-            return new MylikedShowDto(
-                    show.getShowNo(),
-                    showName,
-                    poster,
-                    period,
-                    available
-            );
-        }).toList();
+    public List<MyLikedShowProjection> getMyLikedShows(Long memberId) {
+        return myLikedShowRepository.findMyLikedShows(memberId);
     }
+
+    // 찜 취소
+    @Override
+    public void deleteMylikedShow(Long id, Long showId) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"회원 정보를 찾을 수 없습니다."));
+
+        Show show = showRepository.findById(showId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"공연 정보를 찾을 수 없습니다."));
+
+        ShowLikes like = showLikesRepository.findByShowAndMember(show, member)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"찜 내역이 존재하지 않습니다."));
+
+        showLikesRepository.delete(like);
+    }
+
 }
 
 

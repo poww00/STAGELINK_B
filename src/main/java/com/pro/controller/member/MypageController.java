@@ -94,11 +94,11 @@ public class MypageController {
 
     // 찜 목록 조회
     @GetMapping("/likes")
-    public ResponseEntity<List<MylikedShowDto>> getMylikedShows(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        Long memberId = userDetails.getId();
-        List<MylikedShowDto> likedShows = mypageService.getLikedShows(memberId);
-        return ResponseEntity.ok(likedShows);
+    public List<MyLikedShowProjection> getLikedShows(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long memberId = userDetails.getMember().getId();
+        return mypageService.getMyLikedShows(memberId);
     }
+
 
     // 회원 탈퇴 가능한지 미리 확인
     @GetMapping("/check-can-withdraw")
@@ -116,5 +116,14 @@ public class MypageController {
         Long memberId = userDetails.getId();
         memberService.withdrawMember(memberId);
         return ResponseEntity.ok("회원 탈퇴 완료");
+    }
+
+    // 찜 취소
+    @DeleteMapping("/likes/{showId}")
+    public ResponseEntity<?> deleteMylikedShow(@PathVariable Long showId,
+                                               @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long memberId = userDetails.getId();
+        mypageService.deleteMylikedShow(memberId, showId);
+        return ResponseEntity.ok("찜이 성공적으로 취소되었습니다.");
     }
 }
