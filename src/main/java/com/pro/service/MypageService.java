@@ -26,7 +26,7 @@ public interface MypageService {
     MyReservationDetailDto getReservationDetail(Long id);
 
     // 찜 목록 조회
-    List<MyLikedShowProjection> getMyLikedShows(Long memberId);
+    List<MyLikedShowDto> getMyLikedShows(Long memberId);
 
     // 찜 취소
     void deleteMylikedShow(Long id, Long showId);
