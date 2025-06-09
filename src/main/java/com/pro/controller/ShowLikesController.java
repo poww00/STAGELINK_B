@@ -18,40 +18,40 @@ public class ShowLikesController {
 
     /**
      * 찜 여부 확인
-     * GET /api/likes/check?showNo=...&userId=...
+     * GET /api/likes/check?showInfoId=...&userId=...
      */
     @GetMapping("/check")
     public ResponseEntity<Boolean> isLiked(
-            @RequestParam Long showNo,
+            @RequestParam Integer showInfoId,
             @RequestParam Long userId
     ) {
-        boolean liked = showLikesService.isLiked(showNo, userId);
+        boolean liked = showLikesService.isLiked(showInfoId, userId);
         return ResponseEntity.ok(liked);
     }
 
     /**
      * 공연 찜 추가
-     * POST /api/likes?showNo=...&userId=...
+     * POST /api/likes?showInfoId=...&userId=...
      */
     @PostMapping
     public ResponseEntity<Void> addLike(
-            @RequestParam Long showNo,
+            @RequestParam Integer showInfoId,
             @RequestParam Long userId
     ) {
-        showLikesService.addLike(showNo, userId);
+        showLikesService.addLike(showInfoId, userId);
         return ResponseEntity.ok().build();
     }
 
     /**
      * 공연 찜 삭제
-     * DELETE /api/likes?showNo=...&userId=...
+     * DELETE /api/likes?showInfoId=...&userId=...
      */
     @DeleteMapping
     public ResponseEntity<Void> removeLike(
-            @RequestParam Long showNo,
+            @RequestParam Integer showInfoId,
             @RequestParam Long userId
     ) {
-        showLikesService.removeLike(showNo, userId);
+        showLikesService.removeLike(showInfoId, userId);
         return ResponseEntity.ok().build();
     }
 }

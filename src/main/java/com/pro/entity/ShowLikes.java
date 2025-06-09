@@ -19,7 +19,7 @@ public class ShowLikes {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SHOW_NO", nullable = false)
-    private Show show; // 찜한 공연 (FK → TBL_SHOWINFO)
+    private ShowInfo showInfo; // 찜한 공연 정보 (FK → TBL_SHOWINFO)
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER", nullable = false)
