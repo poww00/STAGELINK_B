@@ -11,61 +11,62 @@ import java.time.LocalDateTime;
 @Builder
 public class ShowInfoDTO {
 
-    // 기본 정보
-    private Integer id;             // 공연 ID
-    private String name;           // 공연 제목
-    private String explain;        // 공연 설명
-    private String poster;         // 포스터 이미지 URL
-    private String category;       // 공연 장르
-    private Integer age;           // 관람 가능 연령
-    private String duration;       // 공연 소요 시간
-    private Integer locationId;    // 공연장 ID (FK)
+    /* ────────── 기본 정보 ────────── */
+    private Integer id;         // 공연 ID
+    private String  name;       // 공연 제목
+    private String  explain;    // 공연 설명
+    private String  poster;     // 포스터 URL
+    private String  category;   // 장르
+    private Integer age;        // 관람 연령(원본 숫자)
+    private String  ageLabel;   // 포맷팅된 연령 ("전체 이용가" 등)
+    private String  duration;   // 소요 시간
+    private Integer locationId; // 공연장 ID
 
-    // 공연 상세 이미지
-    private String styUrl1;        // 공연 이미지 1
-    private String styUrl2;        // 공연 이미지 2
-    private String styUrl3;        // 공연 이미지 3
-    private String styUrl4;        // 공연 이미지 4
+    /* ────────── 상세 이미지 ────────── */
+    private String styUrl1;
+    private String styUrl2;
+    private String styUrl3;
+    private String styUrl4;
 
-    // 장소명/주소, 공연기간
-    private String locationName;     // 공연장 이름
-    private String locationAddress;  // 공연장 주소
-    private String periodStart;      // 공연 시작일 (yyyy-MM-dd)
-    private String periodEnd;        // 공연 종료일 (yyyy-MM-dd)
+    /* ────────── 장소/기간 ────────── */
+    private String locationName;
+    private String locationAddress;
+    private String periodStart; // yyyy-MM-dd
+    private String periodEnd;   // yyyy-MM-dd
 
-    // 대표 가격
-    private Integer seatA;         // A석 가격
-    private Integer seatR;         // R석 가격
-    private Integer seatS;         // S석 가격
-    private Integer seatVIP;       // VIP석 가격
+    /* ────────── 대표 가격 ────────── */
+    private Integer seatA;
+    private Integer seatR;
+    private Integer seatS;
+    private Integer seatVIP;
 
-    // 후기 별점 평균
-    private Double rating;         // 별점 평균
+    /* ────────── 후기 별점 평균 ────────── */
+    private Double rating;
 
-    // 대표 회차 정보 (가장 가까운 회차 기준)
-    private Long nearestShowId;         // 대표 회차 ID
-    private LocalDateTime nearestShowStart;  // 시작 시간
-    private Integer nearestShowState;        // 회차 상태 (예: 0:예약 가능, 1:매진, 등)
-    private Integer nearestShowRPrice;       // R석 가격 (회차 기준)
-    private Integer nearestShowSPrice;       // S석 가격 (회차 기준)
-    private Integer nearestShowAPrice;       // A석 가격 (회차 기준)
-    private Integer nearestShowVipPrice;     // VIP석 가격 (회차 기준)
+    /* ────────── 대표 회차 정보 ────────── */
+    private Long          nearestShowId;
+    private LocalDateTime nearestShowStart;
+    private Integer       nearestShowState;
+    private Integer       nearestShowRPrice;
+    private Integer       nearestShowSPrice;
+    private Integer       nearestShowAPrice;
+    private Integer       nearestShowVipPrice;
 
-    /**
-     * ShowInfo + 대표 회차 + 장소명 + 가격 + 별점 포함하여 DTO 변환
-     */
+    /* ================================================================
+     *  엔티티 + 추가 정보 → DTO 변환
+     * ================================================================ */
     public static ShowInfoDTO fromEntity(
             ShowInfo showInfo,
-            String locationName,
-            String locationAddress,
-            String periodStart,
-            String periodEnd,
-            Integer seatA,
-            Integer seatR,
-            Integer seatS,
-            Integer seatVIP,
-            Double rating,
-            Show nearestShow
+            String   locationName,
+            String   locationAddress,
+            String   periodStart,
+            String   periodEnd,
+            Integer  seatA,
+            Integer  seatR,
+            Integer  seatS,
+            Integer  seatVIP,
+            Double   rating,
+            Show     nearestShow
     ) {
         return ShowInfoDTO.builder()
                 .id(showInfo.getId())
@@ -74,6 +75,7 @@ public class ShowInfoDTO {
                 .poster(showInfo.getPoster())
                 .category(showInfo.getCategory())
                 .age(showInfo.getAge())
+                .ageLabel(formatAge(showInfo.getAge()))
                 .duration(showInfo.getDuration())
                 .locationId(showInfo.getLocationId())
                 .styUrl1(showInfo.getStyUrl1())
@@ -97,5 +99,18 @@ public class ShowInfoDTO {
                 .nearestShowAPrice(nearestShow != null ? nearestShow.getSeatAPrice() : null)
                 .nearestShowVipPrice(nearestShow != null ? nearestShow.getSeatVipPrice() : null)
                 .build();
+    }
+
+    /* ================================================================
+     *  관람 연령 포맷터
+     *    - 0         → "전체 이용가"
+     *    - 20 이상   → "XX개월 이상"
+     *    - 1 ~ 19    → "XX세 이상"
+     * ================================================================ */
+    private static String formatAge(Integer age) {
+        if (age == null) return "";
+        if (age == 0)   return "전체 이용가";
+        if (age >= 20)  return age + "개월 이상";
+        return age + "세 이상";
     }
 }
