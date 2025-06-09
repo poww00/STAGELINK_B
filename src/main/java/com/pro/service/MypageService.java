@@ -29,5 +29,5 @@ public interface MypageService {
     List<MyLikedShowDto> getMyLikedShows(Long memberId);
 
     // 찜 취소
-    void deleteMylikedShow(Long id, Long showId);
+    void deleteMylikedShow(Long id, Integer showInfoId);
 }

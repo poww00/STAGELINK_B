@@ -2,6 +2,7 @@ package com.pro.repository;
 
 import com.pro.entity.Member;
 import com.pro.entity.Show;
+import com.pro.entity.ShowInfo;
 import com.pro.entity.ShowLikes;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -16,13 +17,13 @@ import java.util.Optional;
 public interface ShowLikesRepository extends JpaRepository<ShowLikes, Integer> {
 
      //특정 공연과 회원의 찜 정보 조회
-    Optional<ShowLikes> findByShowAndMember(Show show, Member member);
+     Optional<ShowLikes> findByShowInfoAndMember(ShowInfo showInfo, Member member);
 
      //특정 공연과 회원의 찜 정보 삭제
-    void deleteByShowAndMember(Show show, Member member);
+     void deleteByShowInfoAndMember(ShowInfo showInfo, Member member);
 
     // 특정 공연에 대해 사용자가 찜했는지 여부 확인
-    boolean existsByShowAndMember(Show show, Member member);
+    boolean existsByShowInfoAndMember(ShowInfo showInfo, Member member);
 
     // 특정 사용자가 찜한 모든 공연 목록 조회
     List<ShowLikes> findAllByMember(Member member);

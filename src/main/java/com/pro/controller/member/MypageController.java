@@ -120,10 +120,10 @@ public class MypageController {
 
     // 찜 취소
     @DeleteMapping("/likes/{showId}")
-    public ResponseEntity<?> deleteMylikedShow(@PathVariable Long showId,
+    public ResponseEntity<?> deleteMylikedShow(@PathVariable Integer showInfoId,
                                                @AuthenticationPrincipal CustomUserDetails userDetails) {
         Long memberId = userDetails.getId();
-        mypageService.deleteMylikedShow(memberId, showId);
+        mypageService.deleteMylikedShow(memberId, showInfoId);
         return ResponseEntity.ok("찜이 성공적으로 취소되었습니다.");
     }
 }

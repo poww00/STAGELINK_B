@@ -25,7 +25,7 @@ public class MypageServiceImpl implements MypageService {
     private final PasswordEncoder passwordEncoder;
     private final MyReservationRepository myReservationRepository;
     private final ShowLikesRepository showLikesRepository;
-    private final ShowRepository showRepository;
+    private final ShowInfoRepository showInfoRepository;
     private final MyLikedShowRepository myLikedShowRepository;
 
     // 사용자 정보 조회
@@ -158,14 +158,14 @@ public class MypageServiceImpl implements MypageService {
 
     // 찜 취소
     @Override
-    public void deleteMylikedShow(Long id, Long showId) {
+    public void deleteMylikedShow(Long id, Integer showInfoId) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"회원 정보를 찾을 수 없습니다."));
 
-        Show show = showRepository.findById(showId)
+        ShowInfo showInfo = showInfoRepository.findById(showInfoId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"공연 정보를 찾을 수 없습니다."));
 
-        ShowLikes like = showLikesRepository.findByShowAndMember(show, member)
+        ShowLikes like = showLikesRepository.findByShowInfoAndMember(showInfo, member)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"찜 내역이 존재하지 않습니다."));
 
         showLikesRepository.delete(like);
