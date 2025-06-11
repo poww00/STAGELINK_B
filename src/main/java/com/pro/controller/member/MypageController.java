@@ -119,7 +119,7 @@ public class MypageController {
     }
 
     // 찜 취소
-    @DeleteMapping("/likes/{showId}")
+    @DeleteMapping("/likes/{showInfoId}")
     public ResponseEntity<?> deleteMylikedShow(@PathVariable Integer showInfoId,
                                                @AuthenticationPrincipal CustomUserDetails userDetails) {
         Long memberId = userDetails.getId();
